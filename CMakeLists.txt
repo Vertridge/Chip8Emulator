@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(Chip8Emulator VERSION 0.1.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_BUILD_TYPE "Debug")
@@ -23,6 +23,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
 add_compile_options(-Wall -Wextra -pedantic -Werror
     -Wno-unused-variable
 )
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 message("Building in ${CMAKE_BUILD_TYPE}")
 

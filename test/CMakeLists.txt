@@ -10,6 +10,7 @@ include_directories(include)
 add_custom_target(unittests)
 
 add_subdirectory(Disassembler)
+add_subdirectory(Instruction)
 
 add_custom_target(run_unittests
 				  DEPENDS unittests
