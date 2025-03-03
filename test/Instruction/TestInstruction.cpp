@@ -42,7 +42,15 @@ TEST_CASE("Dump Instruction") {
   }
 
   SECTION("Add") {
-    auto addInstr = AddInstruction(0x0, 0x71FF);
-    Verify(&addInstr, "0x0 ADD V1 0xff");
+    auto addInstr = AddInstruction(0x0, 0x710F);
+    Verify(&addInstr, "0x0 ADD V1 0xf");
+
+    CpuState state;
+    addInstr.Execute(state);
+    CHECK(state.registers.V1 == 0x0F);
+
+    state.registers.V1 = 0x10;
+    addInstr.Execute(state);
+    CHECK(state.registers.V1 == 0x1F);
   }
 }

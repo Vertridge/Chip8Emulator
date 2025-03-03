@@ -38,4 +38,30 @@ enum class Register {
   SP = 0xFFF1,
 };
 
+struct CpuState {
+  struct registers {
+    std::uint8_t V0;
+    std::uint8_t V1;
+    std::uint8_t V2;
+    std::uint8_t V3;
+    std::uint8_t V4;
+    std::uint8_t V5;
+    std::uint8_t V6;
+    std::uint8_t V7;
+    std::uint8_t V8;
+    std::uint8_t V9;
+    std::uint8_t VA;
+    std::uint8_t VB;
+    std::uint8_t VC;
+    std::uint8_t VD;
+    std::uint8_t VE;
+    std::uint8_t VF;
+    std::uint16_t I;
+    std::uint8_t VDelay;
+    std::uint8_t VSound;
+    std::uint16_t PC;
+    std::uint8_t SP;
+  } registers;
+};
+
 } // namespace cpu

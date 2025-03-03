@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+using namespace cpu;
+
 namespace Instructions {
 
 enum class Opcode {
@@ -46,7 +48,7 @@ public:
   std::uint8_t GetAddress() { return mAddress; }
 
   virtual void Dump(std::ostream &os);
-  virtual void Execute();
+  virtual void Execute(CpuState& state);
 
 protected:
   std::uint8_t mAddress;
@@ -62,7 +64,7 @@ public:
 
   std::uint8_t GetExecAddr() { return mExecAddr; }
   void Dump(std::ostream &os);
-  void Execute();
+  void Execute(CpuState &state);
 
 private:
   std::uint16_t mExecAddr;
@@ -71,13 +73,13 @@ private:
 class ClsInstruction : public Instruction {
 public:
   ClsInstruction(std::uint8_t address, std::uint16_t data);
-  void Execute();
+  void Execute(CpuState &state);
 };
 
 class RetInstruction : public Instruction {
 public:
   RetInstruction(std::uint8_t address, std::uint16_t data);
-  void Execute();
+  void Execute(CpuState &state);
 };
 
 class JpInstruction : public Instruction {
@@ -85,7 +87,7 @@ public:
   JpInstruction(std::uint8_t address, std::uint16_t data);
   std::uint8_t GetExecAddr() { return mExecAddr; }
   void Dump(std::ostream &os);
-  void Execute();
+  void Execute(CpuState &state);
 
 private:
   std::uint16_t mExecAddr;
@@ -95,12 +97,12 @@ class AddInstruction : public Instruction {
 public:
   AddInstruction(std::uint8_t address, std::uint16_t data);
   std::uint8_t GetConstant() { return mConstant; }
-  cpu::Register GetRegister() { return mRegister; }
+  Register GetRegister() { return mRegister; }
   void Dump(std::ostream &os);
-  void Execute();
+  void Execute(CpuState &state);
 
 private:
-  cpu::Register mRegister;
+  Register mRegister;
   std::uint8_t mConstant;
 };
 
