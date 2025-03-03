@@ -20,8 +20,29 @@ TEST_CASE("Dump Instruction") {
     auto baseInstr = Instruction(Opcode::ADD, 0x0, 0x0);
     Verify(&baseInstr, "0x0 ADD");
   }
+
   SECTION("Sys") {
     auto sysInstr = SysInstruction(0x0, 0x0FFF);
     Verify(&sysInstr, "0x0 SYS 0xfff");
+  }
+
+  SECTION("Cls") {
+    auto clsInstr = ClsInstruction(0x0, 0x00E0);
+    Verify(&clsInstr, "0x0 CLS");
+  }
+
+  SECTION("Ret") {
+    auto retInstr = RetInstruction(0x0, 0x00EE);
+    Verify(&retInstr, "0x0 RET");
+  }
+
+  SECTION("Jp") {
+    auto jpInstr = JpInstruction(0x0, 0x1FFF);
+    Verify(&jpInstr, "0x0 JP 0xfff");
+  }
+
+  SECTION("Add") {
+    auto addInstr = AddInstruction(0x0, 0x71FF);
+    Verify(&addInstr, "0x0 ADD V1 0xff");
   }
 }

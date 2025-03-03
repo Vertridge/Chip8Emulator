@@ -64,13 +64,13 @@ std::string ToString(Opcode opcode) {
 Instruction *CreateInstruction(Opcode opcode, std::uint16_t data) {
   switch (opcode) {
   case Opcode::CLS:
-    return new Instruction(opcode, 0x0, data);
+    return new ClsInstruction(0x0, data);
   case Opcode::RET:
-    return new Instruction(opcode, 0x0, data);
+    return new RetInstruction(0x0, data);
   case Opcode::SYS:
     return new SysInstruction(0x0, data);
   case Opcode::JP:
-    return new Instruction(opcode, 0x0, data);
+    return new JpInstruction(0x0, data);
   case Opcode::RND:
     return new Instruction(opcode, 0x0, data);
   case Opcode::CALL:
@@ -82,7 +82,7 @@ Instruction *CreateInstruction(Opcode opcode, std::uint16_t data) {
   case Opcode::LD:
     return new Instruction(opcode, 0x0, data);
   case Opcode::ADD:
-    return new Instruction(opcode, 0x0, data);
+    return new AddInstruction(0x0, data);
   case Opcode::SUB:
     return new Instruction(opcode, 0x0, data);
   case Opcode::SUBN:

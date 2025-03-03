@@ -1,11 +1,10 @@
 #pragma once
 
-#include <array>
+#include <CPU/CpuState.h>
+
 #include <cstdint>
-#include <exception>
 #include <ostream>
 #include <string>
-#include <string_view>
 #include <vector>
 
 namespace Instructions {
@@ -67,6 +66,42 @@ public:
 
 private:
   std::uint16_t mExecAddr;
+};
+
+class ClsInstruction : public Instruction {
+public:
+  ClsInstruction(std::uint8_t address, std::uint16_t data);
+  void Execute();
+};
+
+class RetInstruction : public Instruction {
+public:
+  RetInstruction(std::uint8_t address, std::uint16_t data);
+  void Execute();
+};
+
+class JpInstruction : public Instruction {
+public:
+  JpInstruction(std::uint8_t address, std::uint16_t data);
+  std::uint8_t GetExecAddr() { return mExecAddr; }
+  void Dump(std::ostream &os);
+  void Execute();
+
+private:
+  std::uint16_t mExecAddr;
+};
+
+class AddInstruction : public Instruction {
+public:
+  AddInstruction(std::uint8_t address, std::uint16_t data);
+  std::uint8_t GetConstant() { return mConstant; }
+  cpu::Register GetRegister() { return mRegister; }
+  void Dump(std::ostream &os);
+  void Execute();
+
+private:
+  cpu::Register mRegister;
+  std::uint8_t mConstant;
 };
 
 } // namespace Instructions
