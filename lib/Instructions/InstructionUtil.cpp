@@ -18,11 +18,23 @@ std::string ToString(Opcode opcode) {
     return "RND";
   case Opcode::CALL:
     return "CALL";
-  case Opcode::SE:
+  case Opcode::SExkk:
+  case Opcode::SExy:
     return "SE";
-  case Opcode::SNE:
+  case Opcode::SNExkk:
+  case Opcode::SNExy:
     return "SNE";
-  case Opcode::LD:
+  case Opcode::LDxkk:
+  case Opcode::LDxy:
+  case Opcode::LDnnn:
+  case Opcode::LDxdt:
+  case Opcode::LDx0:
+  case Opcode::LDdtx:
+  case Opcode::LDstx:
+  case Opcode::LDfx:
+  case Opcode::LDbx:
+  case Opcode::LDix:
+  case Opcode::LDxi:
     return "LD";
   case Opcode::ADD:
     return "ADD";
@@ -74,12 +86,28 @@ Instruction *CreateInstruction(Opcode opcode, std::uint16_t data) {
   case Opcode::RND:
     return new Instruction(opcode, 0x0, data);
   case Opcode::CALL:
-    return new Instruction(opcode, 0x0, data);
-  case Opcode::SE:
-    return new Instruction(opcode, 0x0, data);
-  case Opcode::SNE:
-    return new Instruction(opcode, 0x0, data);
-  case Opcode::LD:
+    return new CallInstruction(0x0, data);
+  case Opcode::SExkk:
+    return new SexkkInstruction(0x0, data);
+  case Opcode::SExy:
+    return new SexyInstruction(0x0, data);
+  case Opcode::SNExkk:
+    return new SnexkkInstruction(0x0, data);
+  case Opcode::SNExy:
+    return new SnexyInstruction(0x0, data);
+  case Opcode::LDxkk:
+    return new LdxkkInstruction(0x0, data);
+  case Opcode::LDxy:
+    return new LdxyInstruction(0x0, data);
+  case Opcode::LDnnn:
+  case Opcode::LDxdt:
+  case Opcode::LDx0:
+  case Opcode::LDdtx:
+  case Opcode::LDstx:
+  case Opcode::LDfx:
+  case Opcode::LDbx:
+  case Opcode::LDix:
+  case Opcode::LDxi:
     return new Instruction(opcode, 0x0, data);
   case Opcode::ADD:
     return new AddInstruction(0x0, data);
