@@ -4,6 +4,7 @@
 #include <CPU/CpuUtil.h>
 
 #include <cassert>
+#include <cstdint>
 #include <ios>
 
 using namespace cpu;
@@ -193,21 +194,186 @@ void LdxyInstruction::Execute(CpuState &state) {
   regx = regy;
 }
 
-AddInstruction::AddInstruction(std::uint8_t address, std::uint16_t data)
-    : Instruction(Opcode::ADD, address, data) {
+AddxkkInstruction::AddxkkInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::ADDxkk, address, data) {
   mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mConstant = data & const_mask;
 }
 
-void AddInstruction::Dump(std::ostream &os) {
+void AddxkkInstruction::Dump(std::ostream &os) {
   Instruction::Dump(os);
   os << " " << cpu::ToString(mRegister) << " 0x" << std::hex
      << static_cast<unsigned int>(mConstant);
 }
 
-void AddInstruction::Execute(CpuState &state) {
+void AddxkkInstruction::Execute(CpuState &state) {
   auto &reg = ::GetRegister(mRegister, state);
   reg = reg + mConstant;
+}
+
+AddxyInstruction::AddxyInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::ADDxy, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void AddxyInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void AddxyInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  const uint16_t xval = regx;
+  const uint16_t yval = regy;
+  const uint16_t sum = xval + yval;
+  // if the result is bigger than fits in a uint8 we set the carry flag
+  if (sum > std::numeric_limits<uint8_t>::max()) {
+    state.registers.VF = 1;
+  } else {
+    state.registers.VF = 0;
+  }
+  regx = static_cast<std::uint8_t>(sum & 0xFF);
+}
+
+SubInstruction::SubInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::SUB, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void SubInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void SubInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  if (regx > regy) {
+    state.registers.VF = 1;
+  } else {
+    state.registers.VF = 0;
+  }
+  regx = regx - regy;
+}
+
+SubnInstruction::SubnInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::SUBN, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void SubnInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void SubnInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  if (regx < regy) {
+    state.registers.VF = 1;
+  } else {
+    state.registers.VF = 0;
+  }
+  regx = regx - regy;
+}
+
+OrInstruction::OrInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::OR, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void OrInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void OrInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  regx = regx | regy;
+}
+
+AndInstruction::AndInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::AND, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void AndInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void AndInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  regx = regx & regy;
+}
+
+XorInstruction::XorInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::XOR, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void XorInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void XorInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  regx = regx ^ regy;
+}
+
+ShrInstruction::ShrInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::SHR, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void ShrInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void ShrInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  if (regx & 1) {
+    state.registers.VF = 1;
+  } else {
+    state.registers.VF = 0;
+  }
+  regx = regx >> 1;
+}
+
+ShlInstruction::ShlInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::SHL, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+}
+
+void ShlInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY);
+}
+
+void ShlInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+  if (regx & 0b1000'0000) {
+    state.registers.VF = 1;
+  } else {
+    state.registers.VF = 0;
+  }
+  regx = regx << 1;
 }
 
 } // namespace Instructions

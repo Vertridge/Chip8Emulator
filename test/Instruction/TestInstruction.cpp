@@ -17,7 +17,7 @@ void Verify(Instruction *instr, std::string expected) {
 TEST_CASE("Dump Instruction") {
 
   SECTION("Base instruction") {
-    auto baseInstr = Instruction(Opcode::ADD, 0x0, 0x0);
+    auto baseInstr = Instruction(Opcode::ADDix, 0x0, 0x0);
     Verify(&baseInstr, "0x0 ADD");
   }
 
@@ -148,16 +148,263 @@ TEST_CASE("Dump Instruction") {
     CHECK(state.registers.V1 == 0x0F);
   }
 
-  SECTION("Add") {
-    auto addInstr = AddInstruction(0x0, 0x710F);
-    Verify(&addInstr, "0x0 ADD V1 0xf");
+  SECTION("Addxkk") {
+    auto addxkkInstr = AddxkkInstruction(0x0, 0x710F);
+    Verify(&addxkkInstr, "0x0 ADD V1 0xf");
 
     CpuState state;
-    addInstr.Execute(state);
+    addxkkInstr.Execute(state);
     CHECK(state.registers.V1 == 0x0F);
 
     state.registers.V1 = 0x10;
-    addInstr.Execute(state);
+    addxkkInstr.Execute(state);
     CHECK(state.registers.V1 == 0x1F);
+  }
+
+  SECTION("Addxy") {
+    auto addxyInstr = AddxyInstruction(0x0, 0x8014);
+    Verify(&addxyInstr, "0x0 ADD V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0F;
+    addxyInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0F);
+    CHECK(state.registers.V1 == 0x0F);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0;
+    addxyInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.V1 == 0x0);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0b010101;
+    state.registers.V1 = 0b101010;
+    addxyInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b111111);
+    CHECK(state.registers.V1 == 0b101010);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0xFF;
+    state.registers.V1 = 0x01;
+    addxyInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.V1 == 0x01);
+    CHECK(state.registers.VF == 0x1);
+
+    state.registers.V0 = 0xFF;
+    state.registers.V1 = 0xFF;
+    addxyInstr.Execute(state);
+    CHECK(state.registers.V0 == 0xFE);
+    CHECK(state.registers.V1 == 0xFF);
+    CHECK(state.registers.VF == 0x1);
+  }
+
+  SECTION("Sub") {
+    auto subInstr = SubInstruction(0x0, 0x8015);
+    Verify(&subInstr, "0x0 SUB V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0xFF;
+    state.registers.V1 = 0x0F;
+    subInstr.Execute(state);
+    CHECK(state.registers.V0 == 0xF0);
+    CHECK(state.registers.V1 == 0x0F);
+    CHECK(state.registers.VF == 0x1);
+
+    state.registers.V0 = 0xFF;
+    state.registers.V1 = 0xFF;
+    subInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x00);
+    CHECK(state.registers.V1 == 0xFF);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0x0F;
+    state.registers.V1 = 0xFF;
+    subInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x10);
+    CHECK(state.registers.V1 == 0xFF);
+    CHECK(state.registers.VF == 0x0);
+  }
+
+  SECTION("Subn") {
+    auto subnInstr = SubnInstruction(0x0, 0x8017);
+    Verify(&subnInstr, "0x0 SUBN V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0xFF;
+    state.registers.V1 = 0x0F;
+    subnInstr.Execute(state);
+    CHECK(state.registers.V0 == 0xF0);
+    CHECK(state.registers.V1 == 0x0F);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0xFF;
+    state.registers.V1 = 0xFF;
+    subnInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x00);
+    CHECK(state.registers.V1 == 0xFF);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0x0F;
+    state.registers.V1 = 0xFF;
+    subnInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x10);
+    CHECK(state.registers.V1 == 0xFF);
+    CHECK(state.registers.VF == 0x1);
+  }
+
+  SECTION("Or") {
+    auto orInstr = OrInstruction(0x0, 0x8011);
+    Verify(&orInstr, "0x0 OR V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0F;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0F);
+    CHECK(state.registers.V1 == 0x0F);
+
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.V1 == 0x0);
+
+    state.registers.V0 = 0b010101;
+    state.registers.V1 = 0b101010;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b111111);
+    CHECK(state.registers.V1 == 0b101010);
+  }
+
+  SECTION("And") {
+    auto orInstr = AndInstruction(0x0, 0x8012);
+    Verify(&orInstr, "0x0 AND V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0x0F;
+    state.registers.V1 = 0x0F;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0F);
+    CHECK(state.registers.V1 == 0x0F);
+
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0F;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.V1 == 0x0F);
+
+    state.registers.V0 = 0b010101;
+    state.registers.V1 = 0b101010;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b0);
+    CHECK(state.registers.V1 == 0b101010);
+
+    state.registers.V0 = 0b001111;
+    state.registers.V1 = 0b101010;
+    orInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b1010);
+    CHECK(state.registers.V1 == 0b101010);
+  }
+
+  SECTION("Xor") {
+    auto xorInstr = XorInstruction(0x0, 0x8013);
+    Verify(&xorInstr, "0x0 XOR V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0F;
+    xorInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0F);
+    CHECK(state.registers.V1 == 0x0F);
+
+    state.registers.V0 = 0x0;
+    state.registers.V1 = 0x0;
+    xorInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.V1 == 0x0);
+
+    state.registers.V0 = 0b010101;
+    state.registers.V1 = 0b101010;
+    xorInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b111111);
+    CHECK(state.registers.V1 == 0b101010);
+
+    state.registers.V0 = 0x0F;
+    state.registers.V1 = 0x0F;
+    xorInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.V1 == 0x0F);
+
+    state.registers.V0 = 0b00001111;
+    state.registers.V1 = 0b10101010;
+    xorInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b10100101);
+    CHECK(state.registers.V1 == 0b10101010);
+  }
+
+  SECTION("Shr") {
+    auto shrInstr = ShrInstruction(0x0, 0x8016);
+    Verify(&shrInstr, "0x0 SHR V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0x0;
+    shrInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0x1;
+    shrInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.VF == 0x1);
+
+    state.registers.V0 = 0x2;
+    shrInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x1);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0xFF;
+    shrInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x7F);
+    CHECK(state.registers.VF == 0x1);
+
+    state.registers.V0 = 0b10101010;
+    shrInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b01010101);
+    CHECK(state.registers.VF == 0b0);
+  }
+
+  SECTION("Shl") {
+    auto shlInstr = ShlInstruction(0x0, 0x801E);
+    Verify(&shlInstr, "0x0 SHL V0 V1");
+
+    CpuState state;
+    state.registers.V0 = 0x0;
+    shlInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x0);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0x1;
+    shlInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x2);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0x2;
+    shlInstr.Execute(state);
+    CHECK(state.registers.V0 == 0x4);
+    CHECK(state.registers.VF == 0x0);
+
+    state.registers.V0 = 0xF0;
+    shlInstr.Execute(state);
+    CHECK(state.registers.V0 == 0xE0);
+    CHECK(state.registers.VF == 0x1);
+
+    state.registers.V0 = 0b10101010;
+    shlInstr.Execute(state);
+    CHECK(state.registers.V0 == 0b01010100);
+    CHECK(state.registers.VF == 0b1);
   }
 }

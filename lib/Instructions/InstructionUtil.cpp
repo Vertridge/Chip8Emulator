@@ -36,7 +36,9 @@ std::string ToString(Opcode opcode) {
   case Opcode::LDix:
   case Opcode::LDxi:
     return "LD";
-  case Opcode::ADD:
+  case Opcode::ADDxkk:
+  case Opcode::ADDxy:
+  case Opcode::ADDix:
     return "ADD";
   case Opcode::SUB:
     return "SUB";
@@ -109,22 +111,26 @@ Instruction *CreateInstruction(Opcode opcode, std::uint16_t data) {
   case Opcode::LDix:
   case Opcode::LDxi:
     return new Instruction(opcode, 0x0, data);
-  case Opcode::ADD:
-    return new AddInstruction(0x0, data);
+  case Opcode::ADDxkk:
+    return new AddxkkInstruction(0x0, data);
+  case Opcode::ADDxy:
+    return new AddxyInstruction(0x0, data);
+  case Opcode::ADDix:
+    return new Instruction(opcode, 0x0, data);
   case Opcode::SUB:
-    return new Instruction(opcode, 0x0, data);
+    return new SubInstruction(0x0, data);
   case Opcode::SUBN:
-    return new Instruction(opcode, 0x0, data);
+    return new SubnInstruction(0x0, data);
   case Opcode::OR:
-    return new Instruction(opcode, 0x0, data);
+    return new OrInstruction(0x0, data);
   case Opcode::AND:
-    return new Instruction(opcode, 0x0, data);
+    return new AndInstruction(0x0, data);
   case Opcode::XOR:
-    return new Instruction(opcode, 0x0, data);
+    return new XorInstruction(0x0, data);
   case Opcode::SHR:
-    return new Instruction(opcode, 0x0, data);
+    return new ShrInstruction(0x0, data);
   case Opcode::SHL:
-    return new Instruction(opcode, 0x0, data);
+    return new ShlInstruction(0x0, data);
   case Opcode::SKP:
     return new Instruction(opcode, 0x0, data);
   case Opcode::SKNP:

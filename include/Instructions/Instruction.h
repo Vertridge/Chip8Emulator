@@ -33,7 +33,9 @@ enum class Opcode {
   LDbx,
   LDix,
   LDxi,
-  ADD,
+  ADDxkk,
+  ADDxy,
+  ADDix,
   OR,
   AND,
   XOR,
@@ -202,9 +204,9 @@ private:
   Register mRegisterY;
 };
 
-class AddInstruction : public Instruction {
+class AddxkkInstruction : public Instruction {
 public:
-  AddInstruction(std::uint8_t address, std::uint16_t data);
+  AddxkkInstruction(std::uint8_t address, std::uint16_t data);
   std::uint8_t GetConstant() { return mConstant; }
   Register GetRegister() { return mRegister; }
   void Dump(std::ostream &os);
@@ -213,6 +215,110 @@ public:
 private:
   Register mRegister;
   std::uint8_t mConstant;
+};
+
+class AddxyInstruction : public Instruction {
+public:
+  AddxyInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class SubInstruction : public Instruction {
+public:
+  SubInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class SubnInstruction : public Instruction {
+public:
+  SubnInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class OrInstruction : public Instruction {
+public:
+  OrInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class AndInstruction : public Instruction {
+public:
+  AndInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class XorInstruction : public Instruction {
+public:
+  XorInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class ShrInstruction : public Instruction {
+public:
+  ShrInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+};
+
+class ShlInstruction : public Instruction {
+public:
+  ShlInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
 };
 
 } // namespace Instructions
