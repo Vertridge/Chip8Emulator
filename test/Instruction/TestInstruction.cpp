@@ -148,6 +148,52 @@ TEST_CASE("Dump Instruction") {
     CHECK(state.registers.V1 == 0x0F);
   }
 
+  SECTION("Ldnnn") {
+    auto ldnnn = LdnnnInstruction(0x0, 0xA010);
+    Verify(&ldnnn, "0x0 LD I 0x10");
+
+    CpuState state;
+    state.registers.I = 0x0;
+    ldnnn.Execute(state);
+    CHECK(state.registers.I == 0x10);
+  }
+
+  SECTION("Ldxdt") {
+    auto ldxdt = LdxdtInstruction(0x0, 0xF107);
+    Verify(&ldxdt, "0x0 LD V1 VDelay");
+
+    CpuState state;
+    state.registers.V1 = 0;
+    state.registers.VDelay = 0xFF;
+    ldxdt.Execute(state);
+    CHECK(state.registers.V1 == state.registers.VDelay);
+    CHECK(state.registers.V1 == 0xFF);
+  }
+
+  SECTION("Lddtx") {
+    auto lddtx = LddtxInstruction(0x0, 0xF107);
+    Verify(&lddtx, "0x0 LD VDelay V1");
+
+    CpuState state;
+    state.registers.V1 = 0xFF;
+    state.registers.VDelay = 0;
+    lddtx.Execute(state);
+    CHECK(state.registers.V1 == state.registers.VDelay);
+    CHECK(state.registers.V1 == 0xFF);
+  }
+
+  SECTION("Ldstx") {
+    auto lddtx = LdstxInstruction(0x0, 0xF107);
+    Verify(&lddtx, "0x0 LD VSound V1");
+
+    CpuState state;
+    state.registers.V1 = 0xFF;
+    state.registers.VSound = 0;
+    lddtx.Execute(state);
+    CHECK(state.registers.V1 == state.registers.VSound);
+    CHECK(state.registers.V1 == 0xFF);
+  }
+
   SECTION("Addxkk") {
     auto addxkkInstr = AddxkkInstruction(0x0, 0x710F);
     Verify(&addxkkInstr, "0x0 ADD V1 0xf");

@@ -204,6 +204,54 @@ private:
   Register mRegisterY;
 };
 
+/// Sets register I to value nnn.
+class LdnnnInstruction : public Instruction {
+public:
+  LdnnnInstruction(std::uint8_t address, std::uint16_t data);
+  std::uint16_t GetValue() { return mValue; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  std::uint16_t mValue;
+};
+
+/// Set register x to value of delay timer register
+class LdxdtInstruction : public Instruction {
+public:
+  LdxdtInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+};
+
+/// Set value of delay timer register equal to register x
+class LddtxInstruction : public Instruction {
+public:
+  LddtxInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+};
+
+/// Set value of sound timer register equal to register x
+class LdstxInstruction : public Instruction {
+public:
+  LdstxInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+};
+
 class AddxkkInstruction : public Instruction {
 public:
   AddxkkInstruction(std::uint8_t address, std::uint16_t data);

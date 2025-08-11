@@ -1,4 +1,6 @@
 #include "Instructions/InstructionUtil.h"
+
+#include <CPU/CpuState.h>
 #include <Instructions/Instruction.h>
 
 #include <CPU/CpuUtil.h>
@@ -192,6 +194,67 @@ void LdxyInstruction::Execute(CpuState &state) {
   auto &regx = ::GetRegister(mRegisterX, state);
   const auto &regy = ::GetRegister(mRegisterY, state);
   regx = regy;
+}
+
+LdnnnInstruction::LdnnnInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::LDnnn, address, data) {
+  mValue = data & addr12bit_mask;
+}
+
+void LdnnnInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(Register::I) << " "
+     << "0x" << std::hex << mValue;
+}
+
+void LdnnnInstruction::Execute(CpuState &state) { state.registers.I = mValue; }
+
+LdxdtInstruction::LdxdtInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::LDxdt, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void LdxdtInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " "
+     << cpu::ToString(Register::VDelay);
+}
+
+void LdxdtInstruction::Execute(CpuState &state) {
+  auto &regx = ::GetRegister(mRegisterX, state);
+  regx = state.registers.VDelay;
+}
+
+LddtxInstruction::LddtxInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::LDxdt, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void LddtxInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(Register::VDelay) << " "
+     << cpu::ToString(mRegisterX);
+}
+
+void LddtxInstruction::Execute(CpuState &state) {
+  const auto &regx = ::GetRegister(mRegisterX, state);
+  state.registers.VDelay = regx;
+}
+
+LdstxInstruction::LdstxInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::LDxdt, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void LdstxInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(Register::VSound) << " "
+     << cpu::ToString(mRegisterX);
+}
+
+void LdstxInstruction::Execute(CpuState &state) {
+  const auto &regx = ::GetRegister(mRegisterX, state);
+  state.registers.VSound = regx;
 }
 
 AddxkkInstruction::AddxkkInstruction(std::uint8_t address, std::uint16_t data)
