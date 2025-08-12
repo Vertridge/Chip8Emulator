@@ -1,5 +1,6 @@
 #include "catch.hpp"
 
+#include "CPU/CpuUtil.h"
 #include "Instructions/Instruction.h"
 
 #include <iostream>
@@ -194,6 +195,45 @@ TEST_CASE("Dump Instruction") {
     CHECK(state.registers.V1 == 0xFF);
   }
 
+  SECTION("Ldix") {
+    auto ldix = LdixInstruction(0x0, 0xFF55);
+    Verify(&ldix, "0x0 LD [I] VF");
+
+    CpuState state;
+    state.registers.I = cpu::memory_start;
+    for (int i = 0; i < static_cast<int>(Register::VF); ++i) {
+      auto &reg = cpu::GetRegister(static_cast<Register>(i), state);
+      reg = static_cast<std::uint8_t>(i);
+      CHECK(state.memory.Read(state.registers.I + i) == 0);
+    }
+    ldix.Execute(state);
+    for (int i = 0; i < static_cast<int>(Register::VF); ++i) {
+      const auto &reg = cpu::GetRegister(static_cast<Register>(i), state);
+      CHECK(state.memory.Read(state.registers.I + i) ==
+            static_cast<std::uint8_t>(i));
+      CHECK(state.memory.Read(state.registers.I + i) == reg);
+    }
+  }
+
+  SECTION("Ldxi") {
+    auto ldxi = LdxiInstruction(0x0, 0xFF55);
+    Verify(&ldxi, "0x0 LD VF [I]");
+
+    CpuState state;
+    state.registers.I = cpu::memory_start;
+    for (int i = 0; i < static_cast<int>(Register::VF); ++i) {
+      auto &reg = cpu::GetRegister(static_cast<Register>(i), state);
+      reg = 0;
+      state.memory.Write(state.registers.I + i, static_cast<std::uint8_t>(i));
+    }
+    ldxi.Execute(state);
+    for (int i = 0; i < static_cast<int>(Register::VF); ++i) {
+      const auto &reg = cpu::GetRegister(static_cast<Register>(i), state);
+      CHECK(reg == static_cast<std::uint8_t>(i));
+      CHECK(reg == state.memory.Read(state.registers.I + i));
+    }
+  }
+
   SECTION("Addxkk") {
     auto addxkkInstr = AddxkkInstruction(0x0, 0x710F);
     Verify(&addxkkInstr, "0x0 ADD V1 0xf");
@@ -246,6 +286,27 @@ TEST_CASE("Dump Instruction") {
     CHECK(state.registers.V0 == 0xFE);
     CHECK(state.registers.V1 == 0xFF);
     CHECK(state.registers.VF == 0x1);
+  }
+
+  SECTION("Addix") {
+    auto addixInstr = AddixInstruction(0x0, 0xF31E);
+    Verify(&addixInstr, "0x0 ADD I V3");
+
+    CpuState state;
+    state.registers.I = 0;
+    state.registers.V3 = 0;
+    addixInstr.Execute(state);
+    CHECK(state.registers.I == 0x0);
+
+    state.registers.I = 0;
+    state.registers.V3 = 0x10;
+    addixInstr.Execute(state);
+    CHECK(state.registers.I == 0x10);
+
+    state.registers.I = 0x10;
+    state.registers.V3 = 0x10;
+    addixInstr.Execute(state);
+    CHECK(state.registers.I == 0x20);
   }
 
   SECTION("Sub") {

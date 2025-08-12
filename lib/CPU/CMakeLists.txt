@@ -1,1 +1,1 @@
-add_library(Cpu CpuUtil.cpp)
+add_library(Cpu CpuUtil.cpp Memory.cpp)

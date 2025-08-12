@@ -113,15 +113,17 @@ Instruction *CreateInstruction(Opcode opcode, std::uint16_t data) {
     return new LdstxInstruction(0x0, data);
   case Opcode::LDfx:
   case Opcode::LDbx:
-  case Opcode::LDix:
-  case Opcode::LDxi:
     return new Instruction(opcode, 0x0, data);
+  case Opcode::LDix:
+    return new LdixInstruction(0x0, data);
+  case Opcode::LDxi:
+    return new LdxiInstruction(0x0, data);
   case Opcode::ADDxkk:
     return new AddxkkInstruction(0x0, data);
   case Opcode::ADDxy:
     return new AddxyInstruction(0x0, data);
   case Opcode::ADDix:
-    return new Instruction(opcode, 0x0, data);
+    return new AddixInstruction(0x0, data);
   case Opcode::SUB:
     return new SubInstruction(0x0, data);
   case Opcode::SUBN:

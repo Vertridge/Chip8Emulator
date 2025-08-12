@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Memory.h"
+
+// stdlib
+
 #include <cstdint>
 namespace cpu {
 
@@ -62,6 +66,8 @@ struct CpuState {
     std::uint16_t PC = 0;
     std::uint8_t SP = 0;
   } registers;
+
+  Memory memory;
 };
 
 } // namespace cpu

@@ -252,6 +252,28 @@ private:
   Register mRegisterX;
 };
 
+class LdixInstruction : public Instruction {
+public:
+  LdixInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+};
+
+class LdxiInstruction : public Instruction {
+public:
+  LdxiInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+};
+
 class AddxkkInstruction : public Instruction {
 public:
   AddxkkInstruction(std::uint8_t address, std::uint16_t data);
@@ -276,6 +298,17 @@ public:
 private:
   Register mRegisterX;
   Register mRegisterY;
+};
+
+class AddixInstruction : public Instruction {
+public:
+  AddixInstruction(std::uint8_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
 };
 
 class SubInstruction : public Instruction {

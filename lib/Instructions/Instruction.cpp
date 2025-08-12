@@ -257,6 +257,41 @@ void LdstxInstruction::Execute(CpuState &state) {
   state.registers.VSound = regx;
 }
 
+LdixInstruction::LdixInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::LDix, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void LdixInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " [" << cpu::ToString(Register::I) << "] " << cpu::ToString(mRegisterX);
+}
+
+void LdixInstruction::Execute(CpuState &state) {
+  for (int i = 0; i < static_cast<int>(mRegisterX); ++i) {
+    const auto &reg = ::GetRegister(static_cast<Register>(i), state);
+    state.memory.Write(state.registers.I + i, reg);
+  }
+}
+
+LdxiInstruction::LdxiInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::LDxi, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void LdxiInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " [" << cpu::ToString(Register::I)
+     << "]";
+}
+
+void LdxiInstruction::Execute(CpuState &state) {
+  for (int i = 0; i < static_cast<int>(mRegisterX); ++i) {
+    auto &reg = ::GetRegister(static_cast<Register>(i), state);
+    reg = state.memory.Read(state.registers.I + i);
+  }
+}
+
 AddxkkInstruction::AddxkkInstruction(std::uint8_t address, std::uint16_t data)
     : Instruction(Opcode::ADDxkk, address, data) {
   mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
@@ -298,6 +333,21 @@ void AddxyInstruction::Execute(CpuState &state) {
     state.registers.VF = 0;
   }
   regx = static_cast<std::uint8_t>(sum & 0xFF);
+}
+
+AddixInstruction::AddixInstruction(std::uint8_t address, std::uint16_t data)
+    : Instruction(Opcode::ADDix, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void AddixInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(Register::I) << " " << cpu::ToString(mRegisterX);
+}
+
+void AddixInstruction::Execute(CpuState &state) {
+  const auto &regx = ::GetRegister(mRegisterX, state);
+  state.registers.I = state.registers.I + regx;
 }
 
 SubInstruction::SubInstruction(std::uint8_t address, std::uint16_t data)
