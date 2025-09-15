@@ -57,15 +57,16 @@ enum class Opcode {
 
 class Instruction {
 public:
-  Instruction(Opcode opcode, std::uint8_t address, std::uint16_t data);
+  Instruction(Opcode opcode, std::uint16_t address, std::uint16_t data);
   Opcode GetOpcode() { return mOpcode; }
-  std::uint8_t GetAddress() { return mAddress; }
+  std::uint16_t GetAddress() { return mAddress; }
 
   virtual void Dump(std::ostream &os);
   virtual void Execute(CpuState &state);
+  virtual ~Instruction() = default;
 
 protected:
-  std::uint8_t mAddress;
+  std::uint16_t mAddress;
   std::uint16_t mData;
 
 private:
@@ -74,7 +75,7 @@ private:
 
 class SysInstruction : public Instruction {
 public:
-  SysInstruction(std::uint8_t address, std::uint16_t data);
+  SysInstruction(std::uint16_t address, std::uint16_t data);
 
   std::uint8_t GetExecAddr() { return mExecAddr; }
   void Dump(std::ostream &os);
@@ -86,19 +87,19 @@ private:
 
 class ClsInstruction : public Instruction {
 public:
-  ClsInstruction(std::uint8_t address, std::uint16_t data);
+  ClsInstruction(std::uint16_t address, std::uint16_t data);
   void Execute(CpuState &state);
 };
 
 class RetInstruction : public Instruction {
 public:
-  RetInstruction(std::uint8_t address, std::uint16_t data);
+  RetInstruction(std::uint16_t address, std::uint16_t data);
   void Execute(CpuState &state);
 };
 
 class JpInstruction : public Instruction {
 public:
-  JpInstruction(std::uint8_t address, std::uint16_t data);
+  JpInstruction(std::uint16_t address, std::uint16_t data);
   std::uint8_t GetExecAddr() { return mExecAddr; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -109,7 +110,7 @@ private:
 
 class CallInstruction : public Instruction {
 public:
-  CallInstruction(std::uint8_t address, std::uint16_t data);
+  CallInstruction(std::uint16_t address, std::uint16_t data);
   std::uint8_t GetExecAddr() { return mExecAddr; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -122,7 +123,7 @@ private:
 /// instruction.
 class SexkkInstruction : public Instruction {
 public:
-  SexkkInstruction(std::uint8_t address, std::uint16_t data);
+  SexkkInstruction(std::uint16_t address, std::uint16_t data);
   std::uint8_t GetConstant() { return mConstant; }
   Register GetRegister() { return mRegister; }
   void Dump(std::ostream &os);
@@ -137,7 +138,7 @@ private:
 /// instruction.
 class SexyInstruction : public Instruction {
 public:
-  SexyInstruction(std::uint8_t address, std::uint16_t data);
+  SexyInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -152,7 +153,7 @@ private:
 /// instruction.
 class SnexkkInstruction : public Instruction {
 public:
-  SnexkkInstruction(std::uint8_t address, std::uint16_t data);
+  SnexkkInstruction(std::uint16_t address, std::uint16_t data);
   std::uint8_t GetConstant() { return mConstant; }
   Register GetRegister() { return mRegister; }
   void Dump(std::ostream &os);
@@ -167,7 +168,7 @@ private:
 /// instruction.
 class SnexyInstruction : public Instruction {
 public:
-  SnexyInstruction(std::uint8_t address, std::uint16_t data);
+  SnexyInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -180,7 +181,7 @@ private:
 
 class LdxkkInstruction : public Instruction {
 public:
-  LdxkkInstruction(std::uint8_t address, std::uint16_t data);
+  LdxkkInstruction(std::uint16_t address, std::uint16_t data);
   std::uint8_t GetConstant() { return mConstant; }
   Register GetRegister() { return mRegister; }
   void Dump(std::ostream &os);
@@ -193,7 +194,7 @@ private:
 
 class LdxyInstruction : public Instruction {
 public:
-  LdxyInstruction(std::uint8_t address, std::uint16_t data);
+  LdxyInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -207,7 +208,7 @@ private:
 /// Sets register I to value nnn.
 class LdnnnInstruction : public Instruction {
 public:
-  LdnnnInstruction(std::uint8_t address, std::uint16_t data);
+  LdnnnInstruction(std::uint16_t address, std::uint16_t data);
   std::uint16_t GetValue() { return mValue; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -219,7 +220,7 @@ private:
 /// Set register x to value of delay timer register
 class LdxdtInstruction : public Instruction {
 public:
-  LdxdtInstruction(std::uint8_t address, std::uint16_t data);
+  LdxdtInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -231,7 +232,7 @@ private:
 /// Set value of delay timer register equal to register x
 class LddtxInstruction : public Instruction {
 public:
-  LddtxInstruction(std::uint8_t address, std::uint16_t data);
+  LddtxInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -243,7 +244,7 @@ private:
 /// Set value of sound timer register equal to register x
 class LdstxInstruction : public Instruction {
 public:
-  LdstxInstruction(std::uint8_t address, std::uint16_t data);
+  LdstxInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -254,7 +255,7 @@ private:
 
 class LdixInstruction : public Instruction {
 public:
-  LdixInstruction(std::uint8_t address, std::uint16_t data);
+  LdixInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -265,7 +266,7 @@ private:
 
 class LdxiInstruction : public Instruction {
 public:
-  LdxiInstruction(std::uint8_t address, std::uint16_t data);
+  LdxiInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -276,7 +277,7 @@ private:
 
 class AddxkkInstruction : public Instruction {
 public:
-  AddxkkInstruction(std::uint8_t address, std::uint16_t data);
+  AddxkkInstruction(std::uint16_t address, std::uint16_t data);
   std::uint8_t GetConstant() { return mConstant; }
   Register GetRegister() { return mRegister; }
   void Dump(std::ostream &os);
@@ -289,7 +290,7 @@ private:
 
 class AddxyInstruction : public Instruction {
 public:
-  AddxyInstruction(std::uint8_t address, std::uint16_t data);
+  AddxyInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -302,7 +303,7 @@ private:
 
 class AddixInstruction : public Instruction {
 public:
-  AddixInstruction(std::uint8_t address, std::uint16_t data);
+  AddixInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   void Dump(std::ostream &os);
   void Execute(CpuState &state);
@@ -313,7 +314,7 @@ private:
 
 class SubInstruction : public Instruction {
 public:
-  SubInstruction(std::uint8_t address, std::uint16_t data);
+  SubInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -326,7 +327,7 @@ private:
 
 class SubnInstruction : public Instruction {
 public:
-  SubnInstruction(std::uint8_t address, std::uint16_t data);
+  SubnInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -339,7 +340,7 @@ private:
 
 class OrInstruction : public Instruction {
 public:
-  OrInstruction(std::uint8_t address, std::uint16_t data);
+  OrInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -352,7 +353,7 @@ private:
 
 class AndInstruction : public Instruction {
 public:
-  AndInstruction(std::uint8_t address, std::uint16_t data);
+  AndInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -365,7 +366,7 @@ private:
 
 class XorInstruction : public Instruction {
 public:
-  XorInstruction(std::uint8_t address, std::uint16_t data);
+  XorInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -378,7 +379,7 @@ private:
 
 class ShrInstruction : public Instruction {
 public:
-  ShrInstruction(std::uint8_t address, std::uint16_t data);
+  ShrInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);
@@ -391,7 +392,7 @@ private:
 
 class ShlInstruction : public Instruction {
 public:
-  ShlInstruction(std::uint8_t address, std::uint16_t data);
+  ShlInstruction(std::uint16_t address, std::uint16_t data);
   Register GetRegisterX() { return mRegisterX; }
   Register GetRegisterY() { return mRegisterY; }
   void Dump(std::ostream &os);

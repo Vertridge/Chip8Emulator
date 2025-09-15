@@ -20,7 +20,7 @@ constexpr std::uint16_t regy_mask = 0x00F0;
 constexpr std::uint16_t const_mask = 0x00FF;
 } // namespace
 
-Instruction::Instruction(Opcode opcode, std::uint8_t address,
+Instruction::Instruction(Opcode opcode, std::uint16_t address,
                          std::uint16_t data)
     : mAddress(address), mData(data), mOpcode(opcode) {}
 
@@ -32,7 +32,7 @@ void Instruction::Execute(CpuState & /*state*/) {
   assert(false && "Instruction not implemented");
 }
 
-SysInstruction::SysInstruction(std::uint8_t address, std::uint16_t data)
+SysInstruction::SysInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SYS, address, data) {
   mExecAddr = data & addr12bit_mask;
 }
@@ -46,21 +46,21 @@ void SysInstruction::Execute(CpuState & /*state*/) {
   assert(false && "Instruction not implemented");
 }
 
-ClsInstruction::ClsInstruction(std::uint8_t address, std::uint16_t data)
+ClsInstruction::ClsInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::CLS, address, data) {}
 
 void ClsInstruction::Execute(CpuState & /*state*/) {
   assert(false && "Instruction not implemented");
 }
 
-RetInstruction::RetInstruction(std::uint8_t address, std::uint16_t data)
+RetInstruction::RetInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::RET, address, data) {}
 
 void RetInstruction::Execute(CpuState & /*state*/) {
   assert(false && "Instruction not implemented");
 }
 
-JpInstruction::JpInstruction(std::uint8_t address, std::uint16_t data)
+JpInstruction::JpInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::JP, address, data) {
   mExecAddr = data & addr12bit_mask;
 }
@@ -72,7 +72,7 @@ void JpInstruction::Dump(std::ostream &os) {
 
 void JpInstruction::Execute(CpuState &state) { state.registers.PC = mExecAddr; }
 
-CallInstruction::CallInstruction(std::uint8_t address, std::uint16_t data)
+CallInstruction::CallInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::CALL, address, data) {
   mExecAddr = data & addr12bit_mask;
 }
@@ -86,7 +86,7 @@ void CallInstruction::Execute(CpuState & /*state*/) {
   assert(false && "Instruction not implemented");
 }
 
-SexkkInstruction::SexkkInstruction(std::uint8_t address, std::uint16_t data)
+SexkkInstruction::SexkkInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SExkk, address, data) {
   mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mConstant = data & const_mask;
@@ -105,7 +105,7 @@ void SexkkInstruction::Execute(CpuState &state) {
   }
 }
 
-SexyInstruction::SexyInstruction(std::uint8_t address, std::uint16_t data)
+SexyInstruction::SexyInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SExy, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -124,7 +124,7 @@ void SexyInstruction::Execute(CpuState &state) {
   }
 }
 
-SnexkkInstruction::SnexkkInstruction(std::uint8_t address, std::uint16_t data)
+SnexkkInstruction::SnexkkInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SNExkk, address, data) {
   mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mConstant = data & const_mask;
@@ -143,7 +143,7 @@ void SnexkkInstruction::Execute(CpuState &state) {
   }
 }
 
-SnexyInstruction::SnexyInstruction(std::uint8_t address, std::uint16_t data)
+SnexyInstruction::SnexyInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SNExy, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -162,7 +162,7 @@ void SnexyInstruction::Execute(CpuState &state) {
   }
 }
 
-LdxkkInstruction::LdxkkInstruction(std::uint8_t address, std::uint16_t data)
+LdxkkInstruction::LdxkkInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDxkk, address, data) {
   mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mConstant = data & const_mask;
@@ -179,7 +179,7 @@ void LdxkkInstruction::Execute(CpuState &state) {
   reg = mConstant;
 }
 
-LdxyInstruction::LdxyInstruction(std::uint8_t address, std::uint16_t data)
+LdxyInstruction::LdxyInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDxy, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -196,7 +196,7 @@ void LdxyInstruction::Execute(CpuState &state) {
   regx = regy;
 }
 
-LdnnnInstruction::LdnnnInstruction(std::uint8_t address, std::uint16_t data)
+LdnnnInstruction::LdnnnInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDnnn, address, data) {
   mValue = data & addr12bit_mask;
 }
@@ -209,7 +209,7 @@ void LdnnnInstruction::Dump(std::ostream &os) {
 
 void LdnnnInstruction::Execute(CpuState &state) { state.registers.I = mValue; }
 
-LdxdtInstruction::LdxdtInstruction(std::uint8_t address, std::uint16_t data)
+LdxdtInstruction::LdxdtInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDxdt, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
 }
@@ -225,7 +225,7 @@ void LdxdtInstruction::Execute(CpuState &state) {
   regx = state.registers.VDelay;
 }
 
-LddtxInstruction::LddtxInstruction(std::uint8_t address, std::uint16_t data)
+LddtxInstruction::LddtxInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDxdt, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
 }
@@ -241,7 +241,7 @@ void LddtxInstruction::Execute(CpuState &state) {
   state.registers.VDelay = regx;
 }
 
-LdstxInstruction::LdstxInstruction(std::uint8_t address, std::uint16_t data)
+LdstxInstruction::LdstxInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDxdt, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
 }
@@ -257,7 +257,7 @@ void LdstxInstruction::Execute(CpuState &state) {
   state.registers.VSound = regx;
 }
 
-LdixInstruction::LdixInstruction(std::uint8_t address, std::uint16_t data)
+LdixInstruction::LdixInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDix, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
 }
@@ -274,7 +274,7 @@ void LdixInstruction::Execute(CpuState &state) {
   }
 }
 
-LdxiInstruction::LdxiInstruction(std::uint8_t address, std::uint16_t data)
+LdxiInstruction::LdxiInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDxi, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
 }
@@ -292,7 +292,7 @@ void LdxiInstruction::Execute(CpuState &state) {
   }
 }
 
-AddxkkInstruction::AddxkkInstruction(std::uint8_t address, std::uint16_t data)
+AddxkkInstruction::AddxkkInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::ADDxkk, address, data) {
   mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mConstant = data & const_mask;
@@ -309,7 +309,7 @@ void AddxkkInstruction::Execute(CpuState &state) {
   reg = reg + mConstant;
 }
 
-AddxyInstruction::AddxyInstruction(std::uint8_t address, std::uint16_t data)
+AddxyInstruction::AddxyInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::ADDxy, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -335,7 +335,7 @@ void AddxyInstruction::Execute(CpuState &state) {
   regx = static_cast<std::uint8_t>(sum & 0xFF);
 }
 
-AddixInstruction::AddixInstruction(std::uint8_t address, std::uint16_t data)
+AddixInstruction::AddixInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::ADDix, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
 }
@@ -350,7 +350,7 @@ void AddixInstruction::Execute(CpuState &state) {
   state.registers.I = state.registers.I + regx;
 }
 
-SubInstruction::SubInstruction(std::uint8_t address, std::uint16_t data)
+SubInstruction::SubInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SUB, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -372,7 +372,7 @@ void SubInstruction::Execute(CpuState &state) {
   regx = regx - regy;
 }
 
-SubnInstruction::SubnInstruction(std::uint8_t address, std::uint16_t data)
+SubnInstruction::SubnInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SUBN, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -394,7 +394,7 @@ void SubnInstruction::Execute(CpuState &state) {
   regx = regx - regy;
 }
 
-OrInstruction::OrInstruction(std::uint8_t address, std::uint16_t data)
+OrInstruction::OrInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::OR, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -411,7 +411,7 @@ void OrInstruction::Execute(CpuState &state) {
   regx = regx | regy;
 }
 
-AndInstruction::AndInstruction(std::uint8_t address, std::uint16_t data)
+AndInstruction::AndInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::AND, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -428,7 +428,7 @@ void AndInstruction::Execute(CpuState &state) {
   regx = regx & regy;
 }
 
-XorInstruction::XorInstruction(std::uint8_t address, std::uint16_t data)
+XorInstruction::XorInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::XOR, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -445,7 +445,7 @@ void XorInstruction::Execute(CpuState &state) {
   regx = regx ^ regy;
 }
 
-ShrInstruction::ShrInstruction(std::uint8_t address, std::uint16_t data)
+ShrInstruction::ShrInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SHR, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
@@ -467,7 +467,7 @@ void ShrInstruction::Execute(CpuState &state) {
   regx = regx >> 1;
 }
 
-ShlInstruction::ShlInstruction(std::uint8_t address, std::uint16_t data)
+ShlInstruction::ShlInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::SHL, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
   mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);

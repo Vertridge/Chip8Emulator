@@ -75,87 +75,88 @@ std::string ToString(Opcode opcode) {
   }
 }
 
-Instruction *CreateInstruction(Opcode opcode, std::uint16_t data) {
+Instruction *CreateInstruction(std::uint16_t address, Opcode opcode,
+                               std::uint16_t data) {
   switch (opcode) {
   case Opcode::CLS:
-    return new ClsInstruction(0x0, data);
+    return new ClsInstruction(address, data);
   case Opcode::RET:
-    return new RetInstruction(0x0, data);
+    return new RetInstruction(address, data);
   case Opcode::SYS:
-    return new SysInstruction(0x0, data);
+    return new SysInstruction(address, data);
   case Opcode::JP:
-    return new JpInstruction(0x0, data);
+    return new JpInstruction(address, data);
   case Opcode::RND:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::CALL:
-    return new CallInstruction(0x0, data);
+    return new CallInstruction(address, data);
   case Opcode::SExkk:
-    return new SexkkInstruction(0x0, data);
+    return new SexkkInstruction(address, data);
   case Opcode::SExy:
-    return new SexyInstruction(0x0, data);
+    return new SexyInstruction(address, data);
   case Opcode::SNExkk:
-    return new SnexkkInstruction(0x0, data);
+    return new SnexkkInstruction(address, data);
   case Opcode::SNExy:
-    return new SnexyInstruction(0x0, data);
+    return new SnexyInstruction(address, data);
   case Opcode::LDxkk:
-    return new LdxkkInstruction(0x0, data);
+    return new LdxkkInstruction(address, data);
   case Opcode::LDxy:
-    return new LdxyInstruction(0x0, data);
+    return new LdxyInstruction(address, data);
   case Opcode::LDnnn:
-    return new LdnnnInstruction(0x0, data);
+    return new LdnnnInstruction(address, data);
   case Opcode::LDxdt:
-    return new LdxdtInstruction(0x0, data);
+    return new LdxdtInstruction(address, data);
   case Opcode::LDx0:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::LDdtx:
-    return new LddtxInstruction(0x0, data);
+    return new LddtxInstruction(address, data);
   case Opcode::LDstx:
-    return new LdstxInstruction(0x0, data);
+    return new LdstxInstruction(address, data);
   case Opcode::LDfx:
   case Opcode::LDbx:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::LDix:
-    return new LdixInstruction(0x0, data);
+    return new LdixInstruction(address, data);
   case Opcode::LDxi:
-    return new LdxiInstruction(0x0, data);
+    return new LdxiInstruction(address, data);
   case Opcode::ADDxkk:
-    return new AddxkkInstruction(0x0, data);
+    return new AddxkkInstruction(address, data);
   case Opcode::ADDxy:
-    return new AddxyInstruction(0x0, data);
+    return new AddxyInstruction(address, data);
   case Opcode::ADDix:
-    return new AddixInstruction(0x0, data);
+    return new AddixInstruction(address, data);
   case Opcode::SUB:
-    return new SubInstruction(0x0, data);
+    return new SubInstruction(address, data);
   case Opcode::SUBN:
-    return new SubnInstruction(0x0, data);
+    return new SubnInstruction(address, data);
   case Opcode::OR:
-    return new OrInstruction(0x0, data);
+    return new OrInstruction(address, data);
   case Opcode::AND:
-    return new AndInstruction(0x0, data);
+    return new AndInstruction(address, data);
   case Opcode::XOR:
-    return new XorInstruction(0x0, data);
+    return new XorInstruction(address, data);
   case Opcode::SHR:
-    return new ShrInstruction(0x0, data);
+    return new ShrInstruction(address, data);
   case Opcode::SHL:
-    return new ShlInstruction(0x0, data);
+    return new ShlInstruction(address, data);
   case Opcode::SKP:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::SKNP:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::DRW:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::SCD:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::SCR:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::SCL:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::EXIT:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::LOW:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   case Opcode::HIGH:
-    return new Instruction(opcode, 0x0, data);
+    return new Instruction(opcode, address, data);
   }
 }
 

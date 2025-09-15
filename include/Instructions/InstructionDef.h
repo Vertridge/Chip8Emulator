@@ -45,7 +45,7 @@ public:
   bool ContainsOpcode(std::uint16_t data) const;
   Opcode GetOpcode() const { return mOpcode; }
   std::string GetNemonic() const { return ToString(mOpcode); }
-  std::uint16_t GetOpcodeNum() { return mOpcodeNum; }
+  std::uint16_t GetOpcodeNum() const { return mOpcodeNum; }
   std::uint16_t GetImmidiates() const { return mImmidiates; }
 
 private:

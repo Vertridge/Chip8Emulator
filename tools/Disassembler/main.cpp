@@ -1,5 +1,7 @@
 #include <Instructions/Disassembler.h>
 
+#include <Util/Binary.h>
+
 #include <fstream>
 #include <iostream>
 #include <istream>
@@ -22,10 +24,9 @@ int main(int argc, char *argv[]) {
   while (is) {
     std::uint16_t data;
     is.read((char *)&data, sizeof(std::uint16_t));
+    util::SwapBinary(data);
     inputBuff.push_back(data);
   }
-  // std::istream_iterator<std::uint16_t> start(is), end;
-  // std::vector<std::uint16_t> inputBuff(start, end);
 
   std::cout << "Disassembling: " << argv[1] << " " << inputBuff.size()
             << " instructions" << std::endl;
@@ -33,6 +34,11 @@ int main(int argc, char *argv[]) {
   auto disassembled = Disassembler::DisassembleToString(inputBuff);
 
   std::cout << disassembled << std::endl;
+
+  if (argc == 3) {
+    std::ofstream output(argv[2]);
+    output << disassembled;
+  }
 
   return 0;
 }

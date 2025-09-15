@@ -6,10 +6,10 @@
 
 namespace cpu {
 
-constexpr auto memory_size = 0x1000;
+constexpr auto memory_size = 0x1000U;
 // The first 512 bytes, from 0x000 to 0x1FF, are where the original interpreter
 // was located, and should not be used by programs
-constexpr auto memory_start = 0x200;
+constexpr auto memory_start = 0x200U;
 
 class Memory {
 public:
