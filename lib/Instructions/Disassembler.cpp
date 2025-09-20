@@ -25,14 +25,14 @@ const InstructionDef &Disassembler::GetInstructionDef(std::uint16_t data) {
 std::string
 Disassembler::DisassembleToString(const std::vector<std::uint16_t> &input) {
   std::stringstream sstream;
-  std::uint16_t address = memory_start;
+  std::uint16_t address = instruction_start;
   for (auto &c : input) {
     auto &def = GetInstructionDef(c);
     auto *instruction = CreateInstruction(address, def.GetOpcode(), c);
     instruction->Dump(sstream);
     sstream << "\n";
     delete instruction;
-    address += 0x2;
+    address += instruction_size;
   }
 
   return sstream.str();
@@ -42,11 +42,11 @@ std::vector<Instruction *>
 Disassembler::Disassemble(const std::vector<std::uint16_t> &input) {
   std::vector<Instruction *> result;
   result.reserve(input.size());
-  std::uint16_t address = 0;
+  std::uint16_t address = instruction_start;
   for (auto &c : input) {
     auto &def = GetInstructionDef(c);
     result.push_back(CreateInstruction(address, def.GetOpcode(), c));
-    address += 0x2;
+    address += instruction_size;
   }
   return result;
 }

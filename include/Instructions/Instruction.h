@@ -11,6 +11,8 @@ using namespace cpu;
 
 namespace Instructions {
 
+constexpr auto instruction_size = 2;
+
 enum class Opcode {
   CLS,
   RET,
