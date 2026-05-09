@@ -37,6 +37,17 @@ TEST_CASE("Dump Instruction") {
     Verify(&retInstr, "0x0 RET");
   }
 
+  SECTION("Rand") {
+    auto randInstr = RndInstruction(0x0, 0xC10F);
+    Verify(&randInstr, "0x0 RND V1 0xf");
+
+    CpuState state;
+    state.registers.V1 = 0xFF;
+    randInstr.Execute(state);
+
+    CHECK(state.registers.V1 <= 0xF);
+  }
+
   SECTION("Call") {
     auto callInstr = CallInstruction(0x0, 0x2FFF);
     Verify(&callInstr, "0x0 CALL 0xfff");

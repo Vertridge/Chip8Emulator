@@ -110,6 +110,19 @@ private:
   std::uint16_t mExecAddr;
 };
 
+class RndInstruction : public Instruction {
+public:
+  RndInstruction(std::uint16_t address, std::uint16_t data);
+  std::uint8_t GetConstant() { return mConstant; }
+  Register GetRegister() { return mRegister; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegister;
+  std::uint8_t mConstant;
+};
+
 class CallInstruction : public Instruction {
 public:
   CallInstruction(std::uint16_t address, std::uint16_t data);

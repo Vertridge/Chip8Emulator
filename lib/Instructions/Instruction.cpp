@@ -72,6 +72,24 @@ void JpInstruction::Dump(std::ostream &os) {
 
 void JpInstruction::Execute(CpuState &state) { state.registers.PC = mExecAddr; }
 
+RndInstruction::RndInstruction(std::uint16_t address, std::uint16_t data)
+    : Instruction(Opcode::RND, address, data) {
+  mRegister = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mConstant = data & const_mask;
+}
+
+void RndInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegister) << " 0x" << std::hex
+     << static_cast<unsigned int>(mConstant);
+}
+
+void RndInstruction::Execute(CpuState &state) {
+  auto &reg = ::GetRegister(mRegister, state);
+  std::uint8_t randomVal = (std::uint8_t)(rand() % 256);
+  reg = randomVal & mConstant;
+}
+
 CallInstruction::CallInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::CALL, address, data) {
   mExecAddr = data & addr12bit_mask;

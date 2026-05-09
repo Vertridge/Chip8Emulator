@@ -87,7 +87,7 @@ Instruction *CreateInstruction(std::uint16_t address, Opcode opcode,
   case Opcode::JP:
     return new JpInstruction(address, data);
   case Opcode::RND:
-    return new Instruction(opcode, address, data);
+    return new RndInstruction(address, data);
   case Opcode::CALL:
     return new CallInstruction(address, data);
   case Opcode::SExkk:
@@ -145,6 +145,7 @@ Instruction *CreateInstruction(std::uint16_t address, Opcode opcode,
     return new Instruction(opcode, address, data);
   case Opcode::DRW:
     return new Instruction(opcode, address, data);
+  // Super chip8 instructions.
   case Opcode::SCD:
     return new Instruction(opcode, address, data);
   case Opcode::SCR:
