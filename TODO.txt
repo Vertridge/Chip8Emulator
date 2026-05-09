@@ -1,0 +1,12 @@
+- Figure out how to render
+  - Have an empty api
+- Implement draw instructions
+  - That call empty api 
+- Implement key listeners
+- Implement renderer
+
+- Properly implement the emulator:
+  - Load game into memory
+  - Retrieve instruction to execute 
+  - Disassemble the instruction
+  - Execute the instruction

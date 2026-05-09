@@ -35,6 +35,7 @@ Instructions::Instruction *Emulator::GetNextInstruction() {
       [&](auto *instruction) { return instruction->GetAddress() == address; });
 
   if (instruction == mInstructions.end()) {
+    assert(false && "Could not find next instruction");
     return nullptr;
   }
 
