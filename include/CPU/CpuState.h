@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Memory.h"
+#include <Output/Display.h>
 
 // stdlib
 
@@ -68,6 +69,7 @@ struct CpuState {
   } registers;
 
   Memory memory;
+  Output::Display display;
 };
 
 } // namespace cpu

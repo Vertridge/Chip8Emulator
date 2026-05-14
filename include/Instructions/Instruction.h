@@ -418,4 +418,19 @@ private:
   Register mRegisterY;
 };
 
+class DrwInstruction : public Instruction {
+public:
+  DrwInstruction(std::uint16_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  Register GetRegisterY() { return mRegisterY; }
+  std::uint8_t GetConstant() { return mConstant; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+  Register mRegisterY;
+  std::uint8_t mConstant;
+};
+
 } // namespace Instructions

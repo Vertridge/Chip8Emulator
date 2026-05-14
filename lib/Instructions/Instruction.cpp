@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cstdint>
 #include <ios>
+#include <vector>
 
 using namespace cpu;
 
@@ -18,6 +19,7 @@ constexpr std::uint16_t addr12bit_mask = 0x0FFF;
 constexpr std::uint16_t regx_mask = 0x0F00;
 constexpr std::uint16_t regy_mask = 0x00F0;
 constexpr std::uint16_t const_mask = 0x00FF;
+constexpr std::uint16_t const_nibble_mask = 0x000F;
 } // namespace
 
 Instruction::Instruction(Opcode opcode, std::uint16_t address,
@@ -25,7 +27,8 @@ Instruction::Instruction(Opcode opcode, std::uint16_t address,
     : mAddress(address), mData(data), mOpcode(opcode) {}
 
 void Instruction::Dump(std::ostream &os) {
-  os << "0x" << std::hex << (std::uint16_t)mAddress << " " << ToString(mOpcode);
+  os << "0x" << std::hex << (std::uint16_t)mAddress << "\t"
+     << (std::uint16_t)mData << "\t" << ToString(mOpcode);
 }
 
 void Instruction::Execute(CpuState & /*state*/) {
@@ -49,9 +52,7 @@ void SysInstruction::Execute(CpuState & /*state*/) {
 ClsInstruction::ClsInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::CLS, address, data) {}
 
-void ClsInstruction::Execute(CpuState & /*state*/) {
-  assert(false && "Instruction not implemented");
-}
+void ClsInstruction::Execute(CpuState &state) { state.display.Clear(); }
 
 RetInstruction::RetInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::RET, address, data) {}
@@ -505,6 +506,32 @@ void ShlInstruction::Execute(CpuState &state) {
     state.registers.VF = 0;
   }
   regx = regx << 1;
+}
+
+DrwInstruction::DrwInstruction(std::uint16_t address, std::uint16_t data)
+    : Instruction(Opcode::DRW, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+  mRegisterY = static_cast<cpu::Register>((data & regy_mask) >> 4);
+  mConstant = static_cast<std::uint8_t>(data & const_nibble_mask);
+}
+
+void DrwInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " " << cpu::ToString(mRegisterX) << " " << cpu::ToString(mRegisterY)
+     << " 0x" << std::hex << static_cast<unsigned int>(mConstant);
+}
+
+void DrwInstruction::Execute(CpuState &state) {
+  // Position to draw at
+  const auto &regx = ::GetRegister(mRegisterX, state);
+  const auto &regy = ::GetRegister(mRegisterY, state);
+
+  std::vector<std::uint8_t> data;
+  auto startAddress = state.registers.I;
+  for (std::uint16_t counter = 0; counter < mConstant; ++counter) {
+    data.push_back(state.memory.Read(startAddress + counter));
+  }
+  state.display.Draw(regx, regy, data);
 }
 
 } // namespace Instructions

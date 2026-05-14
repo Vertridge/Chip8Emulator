@@ -15,13 +15,20 @@ namespace emulator {
 
 namespace {
 std::vector<std::uint8_t> ReadFileToVector(const std::filesystem::path &file) {
-  std::ifstream is(file.string(), std::ios::binary);
-  if (!is) {
+  std::ifstream ifs(file.string(), std::ios::binary | std::ios::ate);
+  if (!ifs) {
     std::cerr << "Failed to open file: " << file << std::endl;
     return {};
   }
-  std::istream_iterator<std::uint8_t> start(is), end;
-  std::vector<std::uint8_t> inputBuff(start, end);
+  const std::streamsize size = ifs.tellg();
+  ifs.seekg(0, std::ios::beg);
+
+  std::vector<std::uint8_t> inputBuff(size);
+
+  if (!ifs.read(reinterpret_cast<char *>(inputBuff.data()), size)) {
+    std::cerr << "Failed to read file: " << file << std::endl;
+    return {};
+  }
 
   return inputBuff;
 }

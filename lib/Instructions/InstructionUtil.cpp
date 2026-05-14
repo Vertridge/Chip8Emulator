@@ -144,7 +144,7 @@ Instruction *CreateInstruction(std::uint16_t address, Opcode opcode,
   case Opcode::SKNP:
     return new Instruction(opcode, address, data);
   case Opcode::DRW:
-    return new Instruction(opcode, address, data);
+    return new DrwInstruction(address, data);
   // Super chip8 instructions.
   case Opcode::SCD:
     return new Instruction(opcode, address, data);
