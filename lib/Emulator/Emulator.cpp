@@ -71,6 +71,56 @@ bool Emulator::LoadGame(const std::filesystem::path path) {
   return true;
 }
 
+void Emulator::Run(bool dumpState) {
+  mRunning = true;
+  if (dumpState) {
+    DumpState(std::cout);
+  }
+  while (mRunning) {
+    auto *instruction = GetNextInstruction();
+    instruction->Dump(std::cout);
+    std::cout << "\n";
+
+    ExecuteInstruction(instruction);
+
+    if (dumpState) {
+      DumpState(std::cout);
+    }
+
+    delete instruction;
+  }
+}
+
+Instructions::Instruction *Emulator::GetNextInstruction() {
+  auto instructionBytes = mState.memory.ReadUint16(mState.registers.PC);
+  return Disassembler::Disassemble(instructionBytes, mState.registers.PC);
+}
+
+void Emulator::ExecuteInstruction(Instructions::Instruction *instruction) {
+  instruction->Execute(mState);
+  mState.registers.PC += Instructions::instruction_size;
+}
+
+void Emulator::DumpState(std::ostream &os) {
+  os << "Dump registers: \n"
+     << "\tV0: 0x" << std::hex << (std::uint16_t)mState.registers.V0
+     << "\tV1: 0x" << std::hex << (std::uint16_t)mState.registers.V1
+     << "\tV2: 0x" << std::hex << (std::uint16_t)mState.registers.V2
+     << "\tV3: 0x" << std::hex << (std::uint16_t)mState.registers.V3 << "\n"
+     << "\tV4: 0x" << std::hex << (std::uint16_t)mState.registers.V4
+     << "\tV5: 0x" << std::hex << (std::uint16_t)mState.registers.V5
+     << "\tV6: 0x" << std::hex << (std::uint16_t)mState.registers.V6
+     << "\tV7: 0x" << std::hex << (std::uint16_t)mState.registers.V7 << "\n"
+     << "\tV8: 0x" << std::hex << (std::uint16_t)mState.registers.V8
+     << "\tV9: 0x" << std::hex << (std::uint16_t)mState.registers.V9
+     << "\tVA: 0x" << std::hex << (std::uint16_t)mState.registers.VA << "\n"
+     << "\tVB: 0x" << std::hex << (std::uint16_t)mState.registers.VB
+     << "\tVC: 0x" << std::hex << (std::uint16_t)mState.registers.VC
+     << "\tVD: 0x" << std::hex << (std::uint16_t)mState.registers.VD << "\n"
+     << "\tVE: 0x" << std::hex << (std::uint16_t)mState.registers.VE
+     << "\tVF: 0x" << std::hex << (std::uint16_t)mState.registers.VF << "\n";
+}
+
 bool Emulator::LoadSprites() {
   std::cout << "Loading Sprites" << std::endl;
   if (!mState.memory.LoadSprite(Output::Sprites::sprite_0_address,
@@ -139,29 +189,6 @@ bool Emulator::LoadSprites() {
   }
 
   return true;
-}
-
-void Emulator::Run() {
-  mRunning = true;
-
-  while (mRunning) {
-    auto *instruction = GetNextInstruction();
-    instruction->Dump(std::cout);
-    std::cout << "\n";
-
-    ExecuteInstruction(instruction);
-    delete instruction;
-  }
-}
-
-Instructions::Instruction *Emulator::GetNextInstruction() {
-  auto instructionBytes = mState.memory.ReadUint16(mState.registers.PC);
-  return Disassembler::Disassemble(instructionBytes, mState.registers.PC);
-}
-
-void Emulator::ExecuteInstruction(Instructions::Instruction *instruction) {
-  instruction->Execute(mState);
-  mState.registers.PC += Instructions::instruction_size;
 }
 
 } // namespace emulator

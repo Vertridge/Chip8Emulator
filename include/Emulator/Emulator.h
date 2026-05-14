@@ -14,7 +14,8 @@ public:
   ~Emulator();
 
   bool LoadGame(const std::filesystem::path path);
-  void Run();
+  void Run(bool dumpState = false);
+  void DumpState(std::ostream &os);
 
 private:
   Instructions::Instruction *GetNextInstruction();

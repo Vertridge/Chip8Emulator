@@ -2,11 +2,7 @@
 #include <Instructions/Disassembler.h>
 #include <Util/Binary.h>
 
-#include <fstream>
 #include <iostream>
-#include <istream>
-#include <iterator>
-#include <vector>
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -19,7 +15,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  emulator.Run();
+  emulator.Run(true);
 
   return 0;
 }

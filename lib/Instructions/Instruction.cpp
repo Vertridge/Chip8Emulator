@@ -303,7 +303,8 @@ void LdfxInstruction::Dump(std::ostream &os) {
 void LdfxInstruction::Execute(CpuState &state) {
   const auto &regx = ::GetRegister(mRegisterX, state);
   // Get sprite address and store in register I
-  state.registers.I = Output::Sprites::GetSpriteAddress(regx);
+  state.registers.I = regx;
+  //  state.registers.I = Output::Sprites::GetSpriteAddress(regx);
 }
 
 LdixInstruction::LdixInstruction(std::uint16_t address, std::uint16_t data)

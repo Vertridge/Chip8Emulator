@@ -42,39 +42,56 @@ constexpr std::uint16_t sprite_D_address = sprite_C_address + sprite_size;
 constexpr std::uint16_t sprite_E_address = sprite_D_address + sprite_size;
 constexpr std::uint16_t sprite_F_address = sprite_E_address + sprite_size;
 
+constexpr std::uint16_t sprite_0_index = 0x0 * 5;
+constexpr std::uint16_t sprite_1_index = 0x1 * 5;
+constexpr std::uint16_t sprite_2_index = 0x2 * 5;
+constexpr std::uint16_t sprite_3_index = 0x3 * 5;
+constexpr std::uint16_t sprite_4_index = 0x4 * 5;
+constexpr std::uint16_t sprite_5_index = 0x5 * 5;
+constexpr std::uint16_t sprite_6_index = 0x6 * 5;
+constexpr std::uint16_t sprite_7_index = 0x7 * 5;
+constexpr std::uint16_t sprite_8_index = 0x8 * 5;
+constexpr std::uint16_t sprite_9_index = 0x9 * 5;
+constexpr std::uint16_t sprite_A_index = 0xA * 5;
+constexpr std::uint16_t sprite_B_index = 0xB * 5;
+constexpr std::uint16_t sprite_C_index = 0xC * 5;
+constexpr std::uint16_t sprite_D_index = 0xD * 5;
+constexpr std::uint16_t sprite_E_index = 0xE * 5;
+constexpr std::uint16_t sprite_F_index = 0xF * 5;
+
 inline std::uint16_t GetSpriteAddress(std::uint8_t value) {
   switch (value) {
-  case 0x0:
+  case sprite_0_index:
     return sprite_0_address;
-  case 0x1:
+  case sprite_1_index:
     return sprite_1_address;
-  case 0x2:
+  case sprite_2_index:
     return sprite_2_address;
-  case 0x3:
+  case sprite_3_index:
     return sprite_3_address;
-  case 0x4:
+  case sprite_4_index:
     return sprite_4_address;
-  case 0x5:
+  case sprite_5_index:
     return sprite_5_address;
-  case 0x6:
+  case sprite_6_index:
     return sprite_6_address;
-  case 0x7:
+  case sprite_7_index:
     return sprite_7_address;
-  case 0x8:
+  case sprite_8_index:
     return sprite_8_address;
-  case 0x9:
+  case sprite_9_index:
     return sprite_9_address;
-  case 0xA:
+  case sprite_A_index:
     return sprite_A_address;
-  case 0xB:
+  case sprite_B_index:
     return sprite_B_address;
-  case 0xC:
+  case sprite_C_index:
     return sprite_C_address;
-  case 0xD:
+  case sprite_D_index:
     return sprite_D_address;
-  case 0xE:
+  case sprite_E_index:
     return sprite_E_address;
-  case 0xF:
+  case sprite_F_index:
     return sprite_F_address;
   }
   assert(false);
