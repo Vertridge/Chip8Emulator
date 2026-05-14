@@ -9,7 +9,7 @@ void Display::Draw(std::size_t x, std::size_t y,
                    std::vector<std::uint8_t> data) {
   std::cout << "Drawing to screen\n";
   for (auto i = 0U; i < data.size(); ++i) {
-    mScreen[x * display_width + y + i] = data[i];
+    mScreen[x * display_width + y + i] ^= data[i];
   }
 }
 
