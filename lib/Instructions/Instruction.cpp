@@ -57,8 +57,11 @@ void ClsInstruction::Execute(CpuState &state) { state.display.Clear(); }
 RetInstruction::RetInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::RET, address, data) {}
 
-void RetInstruction::Execute(CpuState & /*state*/) {
-  assert(false && "Instruction not implemented");
+void RetInstruction::Execute(CpuState &state) {
+  state.registers.PC = state.memory.PopStack(state.registers.SP);
+  state.registers.SP -= 1;
+
+  state.registers.PC -= instruction_size;
 }
 
 JpInstruction::JpInstruction(std::uint16_t address, std::uint16_t data)
@@ -71,7 +74,10 @@ void JpInstruction::Dump(std::ostream &os) {
   os << " 0x" << std::hex << mExecAddr;
 }
 
-void JpInstruction::Execute(CpuState &state) { state.registers.PC = mExecAddr; }
+void JpInstruction::Execute(CpuState &state) {
+  state.registers.PC = mExecAddr;
+  state.registers.PC -= instruction_size;
+}
 
 RndInstruction::RndInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::RND, address, data) {
@@ -101,8 +107,14 @@ void CallInstruction::Dump(std::ostream &os) {
   os << " 0x" << std::hex << mExecAddr;
 }
 
-void CallInstruction::Execute(CpuState & /*state*/) {
-  assert(false && "Instruction not implemented");
+void CallInstruction::Execute(CpuState &state) {
+  // Increase the stack pointer
+  state.registers.SP += 1;
+  // Write to the stack
+  state.memory.PushStack(state.registers.PC, state.registers.SP);
+  // Set pc to the address to execute
+  state.registers.PC = mExecAddr;
+  state.registers.PC -= instruction_size;
 }
 
 SexkkInstruction::SexkkInstruction(std::uint16_t address, std::uint16_t data)
@@ -120,7 +132,7 @@ void SexkkInstruction::Dump(std::ostream &os) {
 void SexkkInstruction::Execute(CpuState &state) {
   const auto &reg = ::GetRegister(mRegister, state);
   if (reg == mConstant) {
-    ++state.registers.PC;
+    state.registers.PC += instruction_size;
   }
 }
 
@@ -139,7 +151,7 @@ void SexyInstruction::Execute(CpuState &state) {
   const auto &regx = ::GetRegister(mRegisterX, state);
   const auto &regy = ::GetRegister(mRegisterY, state);
   if (regx == regy) {
-    ++state.registers.PC;
+    state.registers.PC += instruction_size;
   }
 }
 
@@ -158,7 +170,7 @@ void SnexkkInstruction::Dump(std::ostream &os) {
 void SnexkkInstruction::Execute(CpuState &state) {
   const auto &reg = ::GetRegister(mRegister, state);
   if (reg != mConstant) {
-    ++state.registers.PC;
+    state.registers.PC += instruction_size;
   }
 }
 
@@ -177,7 +189,7 @@ void SnexyInstruction::Execute(CpuState &state) {
   const auto &regx = ::GetRegister(mRegisterX, state);
   const auto &regy = ::GetRegister(mRegisterY, state);
   if (regx != regy) {
-    ++state.registers.PC;
+    state.registers.PC += instruction_size;
   }
 }
 

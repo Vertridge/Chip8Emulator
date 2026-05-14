@@ -7,7 +7,10 @@
 #include <iostream>
 
 namespace cpu {
-Memory::Memory() { mMemoryBuffer.resize(memory_size, 0U); }
+Memory::Memory() {
+  mMemoryBuffer.resize(memory_size, 0U);
+  mStack.resize(16, 0U);
+}
 
 std::uint8_t Memory::Read(std::uint16_t address) const {
   assert(IsValidAddress(address) && "Don't read outside the buffer");
@@ -24,6 +27,15 @@ std::uint16_t Memory::ReadUint16(std::uint16_t address) const {
 void Memory::Write(std::uint16_t address, std::uint8_t value) {
   assert(IsValidAddress(address) && "Don't read outside the buffer");
   mMemoryBuffer[address] = value;
+}
+
+void Memory::WriteUint16(std::uint16_t address, std::uint16_t value) {
+  assert(IsValidAddress(address) && "Don't read outside the buffer");
+  assert(IsValidAddress(address + 1) && "Don't read outside the buffer");
+  std::uint8_t low = value & 0xFF;
+  std::uint8_t high = (value >> 8) & 0xFF;
+  Write(address, high);
+  Write(address + 1, low);
 }
 
 bool Memory::IsValidAddress(std::uint16_t address) const {
@@ -50,4 +62,13 @@ void Memory::Dump(std::ostream &os) {
   os << std::endl;
 }
 
+void Memory::PushStack(std::uint16_t value, std::uint8_t stackPointer) {
+  assert(stackPointer < mStack.size());
+  mStack[stackPointer] = value;
+}
+
+std::uint16_t Memory::PopStack(std::uint8_t stackPointer) {
+  assert(stackPointer < mStack.size());
+  return mStack[stackPointer];
+}
 } // namespace cpu
