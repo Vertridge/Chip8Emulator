@@ -113,6 +113,7 @@ Instruction *CreateInstruction(std::uint16_t address, Opcode opcode,
   case Opcode::LDstx:
     return new LdstxInstruction(address, data);
   case Opcode::LDfx:
+    return new LdfxInstruction(address, data);
   case Opcode::LDbx:
     return new Instruction(opcode, address, data);
   case Opcode::LDix:

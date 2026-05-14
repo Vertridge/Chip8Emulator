@@ -1,9 +1,9 @@
+#include "Output/Sprites.h"
 #include "catch.hpp"
 
 #include "CPU/CpuUtil.h"
 #include "Instructions/Instruction.h"
 
-#include <iostream>
 #include <sstream>
 
 using namespace Instructions;
@@ -19,27 +19,27 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Base instruction") {
     auto baseInstr = Instruction(Opcode::ADDix, 0x0, 0x0);
-    Verify(&baseInstr, "0x0 ADD");
+    Verify(&baseInstr, "0x0\t0\tADD");
   }
 
   SECTION("Sys") {
     auto sysInstr = SysInstruction(0x0, 0x0FFF);
-    Verify(&sysInstr, "0x0 SYS 0xfff");
+    Verify(&sysInstr, "0x0\tfff\tSYS 0xfff");
   }
 
   SECTION("Cls") {
     auto clsInstr = ClsInstruction(0x0, 0x00E0);
-    Verify(&clsInstr, "0x0 CLS");
+    Verify(&clsInstr, "0x0\te0\tCLS");
   }
 
   SECTION("Ret") {
     auto retInstr = RetInstruction(0x0, 0x00EE);
-    Verify(&retInstr, "0x0 RET");
+    Verify(&retInstr, "0x0\tee\tRET");
   }
 
   SECTION("Rand") {
     auto randInstr = RndInstruction(0x0, 0xC10F);
-    Verify(&randInstr, "0x0 RND V1 0xf");
+    Verify(&randInstr, "0x0\tc10f\tRND V1 0xf");
 
     CpuState state;
     state.registers.V1 = 0xFF;
@@ -50,19 +50,19 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Call") {
     auto callInstr = CallInstruction(0x0, 0x2FFF);
-    Verify(&callInstr, "0x0 CALL 0xfff");
+    Verify(&callInstr, "0x0\t2fff\tCALL 0xfff");
   }
 
   SECTION("Sexkk") {
     auto sexkkInstr = SexkkInstruction(0x0, 0x310F);
-    Verify(&sexkkInstr, "0x0 SE V1 0xf");
+    Verify(&sexkkInstr, "0x0\t310f\tSE V1 0xf");
 
     CpuState state;
     state.registers.V1 = 0x0F;
     state.registers.PC = 0;
     sexkkInstr.Execute(state);
     CHECK(state.registers.V1 == 0x0F);
-    CHECK(state.registers.PC == 1);
+    CHECK(state.registers.PC == 2);
 
     state.registers.V1 = 0x01;
     state.registers.PC = 0;
@@ -73,7 +73,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Sexy") {
     auto sexyInstr = SexyInstruction(0x0, 0x5010);
-    Verify(&sexyInstr, "0x0 SE V0 V1");
+    Verify(&sexyInstr, "0x0\t5010\tSE V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0F;
@@ -82,7 +82,7 @@ TEST_CASE("Dump Instruction") {
     sexyInstr.Execute(state);
     CHECK(state.registers.V0 == 0x0F);
     CHECK(state.registers.V1 == 0x0F);
-    CHECK(state.registers.PC == 1);
+    CHECK(state.registers.PC == 2);
 
     state.registers.V0 = 0x0F;
     state.registers.V1 = 0x01;
@@ -95,7 +95,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Snexkk") {
     auto snexkkInstr = SnexkkInstruction(0x0, 0x410F);
-    Verify(&snexkkInstr, "0x0 SNE V1 0xf");
+    Verify(&snexkkInstr, "0x0\t410f\tSNE V1 0xf");
 
     CpuState state;
     state.registers.V1 = 0x0F;
@@ -108,12 +108,12 @@ TEST_CASE("Dump Instruction") {
     state.registers.PC = 0;
     snexkkInstr.Execute(state);
     CHECK(state.registers.V1 == 0x01);
-    CHECK(state.registers.PC == 1);
+    CHECK(state.registers.PC == 2);
   }
 
   SECTION("Snexy") {
     auto snexyInstr = SnexyInstruction(0x0, 0x9010);
-    Verify(&snexyInstr, "0x0 SNE V0 V1");
+    Verify(&snexyInstr, "0x0\t9010\tSNE V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0F;
@@ -130,17 +130,17 @@ TEST_CASE("Dump Instruction") {
     snexyInstr.Execute(state);
     CHECK(state.registers.V0 == 0x0F);
     CHECK(state.registers.V1 == 0x01);
-    CHECK(state.registers.PC == 1);
+    CHECK(state.registers.PC == 2);
   }
 
   SECTION("Jp") {
     auto jpInstr = JpInstruction(0x0, 0x1FFF);
-    Verify(&jpInstr, "0x0 JP 0xfff");
+    Verify(&jpInstr, "0x0\t1fff\tJP 0xfff");
   }
 
   SECTION("Ldxkk") {
     auto ldxkkInstr = LdxkkInstruction(0x0, 0x610F);
-    Verify(&ldxkkInstr, "0x0 LD V1 0xf");
+    Verify(&ldxkkInstr, "0x0\t610f\tLD V1 0xf");
 
     CpuState state;
     state.registers.V1 = 0x0;
@@ -150,7 +150,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Ldxy") {
     auto ldxyInstr = LdxyInstruction(0x0, 0x8010);
-    Verify(&ldxyInstr, "0x0 LD V0 V1");
+    Verify(&ldxyInstr, "0x0\t8010\tLD V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0;
@@ -162,7 +162,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Ldnnn") {
     auto ldnnn = LdnnnInstruction(0x0, 0xA010);
-    Verify(&ldnnn, "0x0 LD I 0x10");
+    Verify(&ldnnn, "0x0\ta010\tLD I 0x10");
 
     CpuState state;
     state.registers.I = 0x0;
@@ -172,7 +172,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Ldxdt") {
     auto ldxdt = LdxdtInstruction(0x0, 0xF107);
-    Verify(&ldxdt, "0x0 LD V1 VDelay");
+    Verify(&ldxdt, "0x0\tf107\tLD V1 VDelay");
 
     CpuState state;
     state.registers.V1 = 0;
@@ -183,8 +183,8 @@ TEST_CASE("Dump Instruction") {
   }
 
   SECTION("Lddtx") {
-    auto lddtx = LddtxInstruction(0x0, 0xF107);
-    Verify(&lddtx, "0x0 LD VDelay V1");
+    auto lddtx = LddtxInstruction(0x0, 0xF115);
+    Verify(&lddtx, "0x0\tf115\tLD VDelay V1");
 
     CpuState state;
     state.registers.V1 = 0xFF;
@@ -196,7 +196,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Ldstx") {
     auto lddtx = LdstxInstruction(0x0, 0xF107);
-    Verify(&lddtx, "0x0 LD VSound V1");
+    Verify(&lddtx, "0x0\tf107\tLD VSound V1");
 
     CpuState state;
     state.registers.V1 = 0xFF;
@@ -206,9 +206,19 @@ TEST_CASE("Dump Instruction") {
     CHECK(state.registers.V1 == 0xFF);
   }
 
+  SECTION("Ldfx") {
+    auto ldfxInstr = LdfxInstruction(0x0, 0xF129);
+    Verify(&ldfxInstr, "0x0\tf129\tLD F V1");
+
+    CpuState state;
+    state.registers.V1 = 0x1;
+    ldfxInstr.Execute(state);
+    CHECK(state.registers.I == Output::Sprites::sprite_1_address);
+  }
+
   SECTION("Ldix") {
     auto ldix = LdixInstruction(0x0, 0xFF55);
-    Verify(&ldix, "0x0 LD [I] VF");
+    Verify(&ldix, "0x0\tff55\tLD [I] VF");
 
     CpuState state;
     state.registers.I = cpu::memory_start;
@@ -227,8 +237,8 @@ TEST_CASE("Dump Instruction") {
   }
 
   SECTION("Ldxi") {
-    auto ldxi = LdxiInstruction(0x0, 0xFF55);
-    Verify(&ldxi, "0x0 LD VF [I]");
+    auto ldxi = LdxiInstruction(0x0, 0xFF65);
+    Verify(&ldxi, "0x0\tff65\tLD VF [I]");
 
     CpuState state;
     state.registers.I = cpu::memory_start;
@@ -247,7 +257,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Addxkk") {
     auto addxkkInstr = AddxkkInstruction(0x0, 0x710F);
-    Verify(&addxkkInstr, "0x0 ADD V1 0xf");
+    Verify(&addxkkInstr, "0x0\t710f\tADD V1 0xf");
 
     CpuState state;
     addxkkInstr.Execute(state);
@@ -260,7 +270,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Addxy") {
     auto addxyInstr = AddxyInstruction(0x0, 0x8014);
-    Verify(&addxyInstr, "0x0 ADD V0 V1");
+    Verify(&addxyInstr, "0x0\t8014\tADD V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0;
@@ -301,7 +311,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Addix") {
     auto addixInstr = AddixInstruction(0x0, 0xF31E);
-    Verify(&addixInstr, "0x0 ADD I V3");
+    Verify(&addixInstr, "0x0\tf31e\tADD I V3");
 
     CpuState state;
     state.registers.I = 0;
@@ -322,7 +332,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Sub") {
     auto subInstr = SubInstruction(0x0, 0x8015);
-    Verify(&subInstr, "0x0 SUB V0 V1");
+    Verify(&subInstr, "0x0\t8015\tSUB V0 V1");
 
     CpuState state;
     state.registers.V0 = 0xFF;
@@ -349,7 +359,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Subn") {
     auto subnInstr = SubnInstruction(0x0, 0x8017);
-    Verify(&subnInstr, "0x0 SUBN V0 V1");
+    Verify(&subnInstr, "0x0\t8017\tSUBN V0 V1");
 
     CpuState state;
     state.registers.V0 = 0xFF;
@@ -376,7 +386,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Or") {
     auto orInstr = OrInstruction(0x0, 0x8011);
-    Verify(&orInstr, "0x0 OR V0 V1");
+    Verify(&orInstr, "0x0\t8011\tOR V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0;
@@ -400,7 +410,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("And") {
     auto orInstr = AndInstruction(0x0, 0x8012);
-    Verify(&orInstr, "0x0 AND V0 V1");
+    Verify(&orInstr, "0x0\t8012\tAND V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0F;
@@ -430,7 +440,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Xor") {
     auto xorInstr = XorInstruction(0x0, 0x8013);
-    Verify(&xorInstr, "0x0 XOR V0 V1");
+    Verify(&xorInstr, "0x0\t8013\tXOR V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0;
@@ -466,7 +476,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Shr") {
     auto shrInstr = ShrInstruction(0x0, 0x8016);
-    Verify(&shrInstr, "0x0 SHR V0 V1");
+    Verify(&shrInstr, "0x0\t8016\tSHR V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0;
@@ -497,7 +507,7 @@ TEST_CASE("Dump Instruction") {
 
   SECTION("Shl") {
     auto shlInstr = ShlInstruction(0x0, 0x801E);
-    Verify(&shlInstr, "0x0 SHL V0 V1");
+    Verify(&shlInstr, "0x0\t801e\tSHL V0 V1");
 
     CpuState state;
     state.registers.V0 = 0x0;
@@ -524,5 +534,10 @@ TEST_CASE("Dump Instruction") {
     shlInstr.Execute(state);
     CHECK(state.registers.V0 == 0b01010100);
     CHECK(state.registers.VF == 0b1);
+  }
+
+  SECTION("Drw") {
+    auto drwInstr = DrwInstruction(0x0, 0xD012);
+    Verify(&drwInstr, "0x0\td012\tDRAW V0 V1 0x2");
   }
 }

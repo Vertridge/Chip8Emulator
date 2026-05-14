@@ -268,6 +268,17 @@ private:
   Register mRegisterX;
 };
 
+class LdfxInstruction : public Instruction {
+public:
+  LdfxInstruction(std::uint16_t address, std::uint16_t data);
+  Register GetRegisterX() { return mRegisterX; }
+  void Dump(std::ostream &os);
+  void Execute(CpuState &state);
+
+private:
+  Register mRegisterX;
+};
+
 class LdixInstruction : public Instruction {
 public:
   LdixInstruction(std::uint16_t address, std::uint16_t data);

@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cstdint>
 #include <iostream>
+#include <vector>
 
 namespace cpu {
 Memory::Memory() {
@@ -70,5 +71,25 @@ void Memory::PushStack(std::uint16_t value, std::uint8_t stackPointer) {
 std::uint16_t Memory::PopStack(std::uint8_t stackPointer) {
   assert(stackPointer < mStack.size());
   return mStack[stackPointer];
+}
+
+bool Memory::LoadSprite(std::uint16_t address, Output::Sprites::Sprite sprite) {
+  if (address > memory_start) {
+    assert(false);
+    return false;
+  }
+  std::copy(sprite.begin(), sprite.end(), mMemoryBuffer.begin() + address);
+  return true;
+}
+
+std::vector<std::uint8_t> Memory::ReadSprite(std::uint16_t address,
+                                             std::uint8_t size) {
+  assert(address + size < mMemoryBuffer.size());
+  std::vector<std::uint8_t> result;
+  result.resize(size);
+  for (std::uint16_t i = 0; i < size; ++i) {
+    result[i] = mMemoryBuffer[address + i];
+  }
+  return result;
 }
 } // namespace cpu

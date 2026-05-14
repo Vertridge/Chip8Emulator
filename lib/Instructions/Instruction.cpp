@@ -1,4 +1,5 @@
 #include "Instructions/InstructionUtil.h"
+#include "Output/Sprites.h"
 
 #include <CPU/CpuState.h>
 #include <Instructions/Instruction.h>
@@ -8,6 +9,7 @@
 #include <cassert>
 #include <cstdint>
 #include <ios>
+#include <iostream>
 #include <vector>
 
 using namespace cpu;
@@ -288,6 +290,22 @@ void LdstxInstruction::Execute(CpuState &state) {
   state.registers.VSound = regx;
 }
 
+LdfxInstruction::LdfxInstruction(std::uint16_t address, std::uint16_t data)
+    : Instruction(Opcode::LDfx, address, data) {
+  mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
+}
+
+void LdfxInstruction::Dump(std::ostream &os) {
+  Instruction::Dump(os);
+  os << " F " << cpu::ToString(mRegisterX);
+}
+
+void LdfxInstruction::Execute(CpuState &state) {
+  const auto &regx = ::GetRegister(mRegisterX, state);
+  // Get sprite address and store in register I
+  state.registers.I = Output::Sprites::GetSpriteAddress(regx);
+}
+
 LdixInstruction::LdixInstruction(std::uint16_t address, std::uint16_t data)
     : Instruction(Opcode::LDix, address, data) {
   mRegisterX = static_cast<cpu::Register>((data & regx_mask) >> 8);
@@ -538,11 +556,8 @@ void DrwInstruction::Execute(CpuState &state) {
   const auto &regx = ::GetRegister(mRegisterX, state);
   const auto &regy = ::GetRegister(mRegisterY, state);
 
-  std::vector<std::uint8_t> data;
-  auto startAddress = state.registers.I;
-  for (std::uint16_t counter = 0; counter < mConstant; ++counter) {
-    data.push_back(state.memory.Read(startAddress + counter));
-  }
+  std::vector<std::uint8_t> data =
+      state.memory.ReadSprite(state.registers.I, mConstant);
   state.display.Draw(regx, regy, data);
 }
 

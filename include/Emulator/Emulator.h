@@ -19,6 +19,7 @@ public:
 private:
   Instructions::Instruction *GetNextInstruction();
   void ExecuteInstruction(Instructions::Instruction *instruction);
+  bool LoadSprites();
 
   std::vector<Instructions::Instruction *> mInstructions;
   cpu::CpuState mState;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Output/Sprites.h>
+
 // stdlib
 #include <cstdint>
 #include <ostream>
@@ -30,6 +32,10 @@ public:
 
   void PushStack(std::uint16_t value, std::uint8_t stackPointer);
   std::uint16_t PopStack(std::uint8_t stackPointer);
+
+  bool LoadSprite(std::uint16_t address, Output::Sprites::Sprite sprite);
+  std::vector<std::uint8_t> ReadSprite(std::uint16_t address,
+                                       std::uint8_t size);
 
 private:
   std::vector<std::uint8_t> mMemoryBuffer;

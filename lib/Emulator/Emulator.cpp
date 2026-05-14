@@ -1,5 +1,6 @@
 #include "Emulator/Emulator.h"
 #include <Instructions/Disassembler.h>
+#include <Output/Sprites.h>
 
 #include <algorithm>
 #include <assert.h>
@@ -8,7 +9,6 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
-#include <iterator>
 #include <system_error>
 
 namespace emulator {
@@ -62,7 +62,82 @@ bool Emulator::LoadGame(const std::filesystem::path path) {
   }
   std::cout << std::endl;
   mState.memory.LoadIntoMemory(std::move(inputBuffer), instruction_start);
+  if (!LoadSprites()) {
+    std::cerr << "Failed to load sprites" << std::endl;
+    return false;
+  }
+
   mState.memory.Dump(std::cout);
+  return true;
+}
+
+bool Emulator::LoadSprites() {
+  std::cout << "Loading Sprites" << std::endl;
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_0_address,
+                                Output::Sprites::sprite_0)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_1_address,
+                                Output::Sprites::sprite_1)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_2_address,
+                                Output::Sprites::sprite_2)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_3_address,
+                                Output::Sprites::sprite_3)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_4_address,
+                                Output::Sprites::sprite_4)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_5_address,
+                                Output::Sprites::sprite_5)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_6_address,
+                                Output::Sprites::sprite_6)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_7_address,
+                                Output::Sprites::sprite_7)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_8_address,
+                                Output::Sprites::sprite_8)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_9_address,
+                                Output::Sprites::sprite_9)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_A_address,
+                                Output::Sprites::sprite_A)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_B_address,
+                                Output::Sprites::sprite_B)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_C_address,
+                                Output::Sprites::sprite_C)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_D_address,
+                                Output::Sprites::sprite_D)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_E_address,
+                                Output::Sprites::sprite_E)) {
+    return false;
+  }
+  if (!mState.memory.LoadSprite(Output::Sprites::sprite_F_address,
+                                Output::Sprites::sprite_F)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -75,6 +150,7 @@ void Emulator::Run() {
     std::cout << "\n";
 
     ExecuteInstruction(instruction);
+    delete instruction;
   }
 }
 

@@ -13,6 +13,7 @@ add_subdirectory(Disassembler)
 add_subdirectory(Instruction)
 add_subdirectory(CPU)
 add_subdirectory(Input)
+add_subdirectory(Output)
 
 
 add_custom_target(run_unittests
