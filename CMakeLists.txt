@@ -9,20 +9,19 @@ set(CMAKE_BUILD_TYPE "Debug")
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
-# Find clang executable and set it as compiler
-find_program(Clang_P clang++ REQUIRED True)
-set(CMAKE_CXX_COMPILER ${Clang_P})
-
-find_program(Clang_C clang REQUIRED True)
-set(CMAKE_C_COMPILER ${Clang_C})
-
 # Use clang lld instead of gnu ld
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
+
+# For dlsym to work
+add_link_options(-Wl,--no-as-needed -ldl)
+
+# Build vendor before adding all the extra compiler flags as SDL will not like it.
+add_subdirectory(vendor)
 
 # lots of warnings and all warnings as errors
-add_compile_options(-Wall -Wextra -pedantic -Werror
-    -Wno-unused-variable
-)
+add_compile_options(-Wall -Wextra -pedantic -Werror 
+  -Wno-unused-variable -Wno-unused-parameter)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
@@ -51,7 +50,6 @@ else()
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
-add_subdirectory(vendor)
 add_subdirectory(lib)
 add_subdirectory(test)
 add_subdirectory(tools)
