@@ -7,23 +7,24 @@
 #include <iostream>
 #include <sstream>
 
-namespace {}
+namespace Disassembler {
 
-const InstructionDef &Disassembler::GetInstructionDef(std::uint16_t data) {
-  auto res = std::find_if(
-      InstructionDefinitions.begin(), InstructionDefinitions.end(),
-      [data](const InstructionDef &def) { return def.ContainsOpcode(data); });
-  if (res == InstructionDefinitions.end()) {
+const Instructions::InstructionDef &GetInstructionDef(std::uint16_t data) {
+  auto res = std::find_if(Instructions::InstructionDefinitions.begin(),
+                          Instructions::InstructionDefinitions.end(),
+                          [data](const Instructions::InstructionDef &def) {
+                            return def.ContainsOpcode(data);
+                          });
+  if (res == Instructions::InstructionDefinitions.end()) {
     std::cerr << "Could not find instruction for the data 0x" << std::hex
               << static_cast<int>(data) << std::endl;
     assert(false);
-    return InstructionDefinitions[0];
+    return Instructions::InstructionDefinitions[0];
   }
   return *res;
 }
 
-std::string
-Disassembler::DisassembleToString(const std::vector<std::uint16_t> &input) {
+std::string DisassembleToString(const std::vector<std::uint16_t> &input) {
   std::stringstream sstream;
   std::uint16_t address = instruction_start;
   for (auto &c : input) {
@@ -32,21 +33,29 @@ Disassembler::DisassembleToString(const std::vector<std::uint16_t> &input) {
     instruction->Dump(sstream);
     sstream << "\n";
     delete instruction;
-    address += instruction_size;
+    address += Instructions::instruction_size;
   }
 
   return sstream.str();
 }
 
-std::vector<Instruction *>
-Disassembler::Disassemble(const std::vector<std::uint16_t> &input) {
-  std::vector<Instruction *> result;
+Instructions::Instruction *Disassemble(std::uint16_t input,
+                                       std::uint16_t address) {
+  auto &def = GetInstructionDef(input);
+  return CreateInstruction(address, def.GetOpcode(), input);
+}
+
+std::vector<Instructions::Instruction *>
+Disassemble(const std::vector<std::uint16_t> &input) {
+  std::vector<Instructions::Instruction *> result;
   result.reserve(input.size());
   std::uint16_t address = instruction_start;
   for (auto &c : input) {
-    auto &def = GetInstructionDef(c);
-    result.push_back(CreateInstruction(address, def.GetOpcode(), c));
-    address += instruction_size;
+    auto *ins = Disassemble(c, address);
+    result.push_back(ins);
+    address += Instructions::instruction_size;
   }
   return result;
 }
+
+} // namespace Disassembler

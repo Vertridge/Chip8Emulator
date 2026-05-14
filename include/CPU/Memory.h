@@ -2,6 +2,7 @@
 
 // stdlib
 #include <cstdint>
+#include <ostream>
 #include <vector>
 
 namespace cpu {
@@ -20,8 +21,11 @@ public:
   Memory &operator=(const Memory &) = delete;
 
   std::uint8_t Read(std::uint16_t address) const;
+  std::uint16_t ReadUint16(std::uint16_t address) const;
   void Write(std::uint16_t address, std::uint8_t value);
   bool IsValidAddress(std::uint16_t address) const;
+  bool LoadIntoMemory(std::vector<std::uint8_t> buffer, std::uint16_t address);
+  void Dump(std::ostream &os);
 
 private:
   std::vector<std::uint8_t> mMemoryBuffer;

@@ -1,2 +1,2 @@
-add_executable(Emulator Emulator.cpp main.cpp)
+add_library(Emulator Emulator.cpp)
 target_link_libraries(Emulator Instructions Cpu Input)

@@ -3,15 +3,17 @@
 #include <CPU/CpuState.h>
 #include <Instructions/Instruction.h>
 
+#include <filesystem>
 #include <vector>
 
 namespace emulator {
 
 class Emulator {
 public:
-  Emulator(std::vector<Instructions::Instruction *> instructions);
+  Emulator();
   ~Emulator();
 
+  bool LoadGame(const std::filesystem::path path);
   void Run();
 
 private:
